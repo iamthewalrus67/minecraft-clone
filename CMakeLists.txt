@@ -47,10 +47,8 @@ if(UNIX)
 		  	submods/glfw/include
 		  )
 
-  find_package(Vulkan REQUIRED)
-
   #LINK LIBS
-  target_link_libraries(${PROJECT_NAME} glfw3 GL GLU X11 ${CMAKE_DL_LIBS} pthread)
+  target_link_libraries(${PROJECT_NAME} glfw3 GL X11 ${CMAKE_DL_LIBS})
 
   target_link_directories(${PROJECT_NAME} PRIVATE submods/glfw/src)
 
