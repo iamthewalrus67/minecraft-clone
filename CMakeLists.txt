@@ -5,7 +5,9 @@ project(${PROJECT_NAME} C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp include/logo.hpp)
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_compile_definitions(${PROJECT_NAME} PRIVATE BX_CONFIG_DEBUG)
 
 # Check if submodules exist
 if(NOT EXISTS "${PROJECT_SOURCE_DIR}/submods/bx/makefile")
@@ -42,13 +44,13 @@ if(UNIX)
 
   target_include_directories(${PROJECT_NAME}
 		  PRIVATE
-		  	${SDL2_INCLUDE_DIRECTORY}
+		  	submods/glfw/include
 		  )
 
   find_package(Vulkan REQUIRED)
 
   #LINK LIBS
-  target_link_libraries(${PROJECT_NAME} SDL2 GL Vulkan::Vulkan X11 ${CMAKE_DL_LIBS} pthread)
+  target_link_libraries(${PROJECT_NAME} glfw3 GL GLU X11 ${CMAKE_DL_LIBS} pthread)
 
   target_link_directories(${PROJECT_NAME} PRIVATE submods/glfw/src)
 
