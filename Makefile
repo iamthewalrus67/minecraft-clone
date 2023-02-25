@@ -24,18 +24,17 @@ BGFX_CONFIG = Debug
 
 LDFLAGS += -lX11
 LDFLAGS += -lGL
-LDFLAGS += -lstdc++
 LDFLAGS += $(BGFX_BIN)/libbgfx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbimg$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libfcpp$(BGFX_CONFIG).a
 LDFLAGS += submods/glfw/src/libglfw3.a
 
-SHADERS_PATH		= res/shaders
-SHADERS				= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
-SHADERS_OUT			= $(SHADERS:.sc=.$(SHADER_TARGET).bin)
-SHADERC				= submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
-SHADER_TARGET = spirv
+SHADERS_PATH = res/shaders
+SHADERS	= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
+SHADERS_OUT	= $(SHADERS:.sc=.bin)
+SHADERC	= submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
+SHADER_TARGET = 330
 SHADER_PLATFORM = linux
 
 CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
@@ -54,11 +53,10 @@ dirs:
 	mkdir -p ./$(BIN)
 
 # shader -> bin
-%.$(SHADER_TARGET).bin: %.sc
+%.bin: %.sc
 	$(SHADERC)	--type $(shell echo $(notdir $@) | cut -c 1)						\
 						  -i submods/bgfx/src										\
 							--platform $(SHADER_PLATFORM)							\
-							-p $(SHADER_TARGET)										\
 							--varyingdef $(dir $@)varying.def.sc					\
 							-f $<													\
 							-o $@
