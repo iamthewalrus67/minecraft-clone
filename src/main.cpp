@@ -16,7 +16,7 @@
 #include "input/keyboard/keyboard.hpp"
 #include "window/window.hpp"
 
-#include "spdlog/spdlog.h"
+#include "logging/logger/logger.hpp"
 
 struct PosColorVertex {
     float m_x;
@@ -55,7 +55,8 @@ bgfx::ProgramHandle m_program;
 bool s_showStats = false;
 
 int main(int argc, char **argv) {
-    spdlog::info("SRAKA");
+    Logger::instance().init();
+    Logger::setDebugMode(true);
 
     WindowWrapper window{"minesraft", 1024, 768};
     Keyboard &keyboard = Keyboard::instance();
