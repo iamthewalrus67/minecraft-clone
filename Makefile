@@ -7,6 +7,9 @@ INCFLAGS += -Isubmods/bx/include
 INCFLAGS += -Isubmods/bimg/include
 INCFLAGS += -Isubmods/glfw/include
 INCFLAGS += -Isubmods/bgfx/3rdparty/fcpp
+INCFLAGS += -Isrc
+
+$(info INCLFAGS: $(INCFLAGS))
 
 CCFLAGS = -std=c++20 -O2 -g -Wall -Wextra -Wpedantic -Wno-unused-parameter
 CCFLAGS += $(INCFLAGS)
@@ -29,6 +32,7 @@ LDFLAGS += $(BGFX_BIN)/libbimg$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libfcpp$(BGFX_CONFIG).a
 LDFLAGS += submods/glfw/src/libglfw3.a
+LDFLAGS += $(INCFLAGS)
 
 SHADERS_PATH = res/shaders
 SHADERS	= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")

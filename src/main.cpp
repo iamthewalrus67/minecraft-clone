@@ -13,7 +13,8 @@
 #elif BX_PLATFORM_OSX
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
-#include <GLFW/glfw3native.h>
+#include "input/keyboard/keyboard.hpp"
+#include "window/window.hpp"
 
 struct PosColorVertex {
     float m_x;
@@ -49,49 +50,23 @@ bgfx::VertexBufferHandle m_vbh;
 bgfx::IndexBufferHandle m_ibh;
 bgfx::ProgramHandle m_program;
 
-static bool s_showStats = false;
-
-static void glfw_errorCallback(int error, const char *description) {
-    fprintf(stderr, "GLFW error %d: %s\n", error, description);
-}
-
-static void glfw_keyCallback(GLFWwindow *window, int key, int scancode,
-                             int action, int mods) {
-    if (key == GLFW_KEY_F1 && action == GLFW_RELEASE)
-        s_showStats = !s_showStats;
-}
+bool s_showStats = false;
 
 int main(int argc, char **argv) {
-    // Create a GLFW window without an OpenGL context.
-    glfwSetErrorCallback(glfw_errorCallback);
-    if (!glfwInit())
-        return 1;
+    WindowWrapper window{"minesraft", 1024, 768};
+    Keyboard &keyboard = Keyboard::instance();
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow *window =
-        glfwCreateWindow(1024, 768, "minesraft", nullptr, nullptr);
-    if (!window)
-        return 1;
-    glfwSetKeyCallback(window, glfw_keyCallback);
-
-    // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create
-    // a render thread. Most graphics APIs must be used on the same thread that
-    // created the window.
+    // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to
+    // create a render thread. Most graphics APIs must be used on the same
+    // thread that created the window.
     bgfx::renderFrame();
     // Initialize bgfx using the native window handle and window resolution.
     bgfx::Init init;
 
-#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-    init.platformData.ndt = glfwGetX11Display();
-    init.platformData.nwh = (void *)(uintptr_t)glfwGetX11Window(window);
-#elif BX_PLATFORM_OSX
-    init.platformData.nwh = glfwGetCocoaWindow(window);
-#elif BX_PLATFORM_WINDOWS
-    init.platformData.nwh = glfwGetWin32Window(window);
-#endif
+    init.platformData.nwh = window.getWindow();
 
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    window.getSize(&width, &height);
     init.resolution.width = (uint32_t)width;
     init.resolution.height = (uint32_t)height;
     init.resolution.reset = BGFX_RESET_VSYNC;
@@ -116,25 +91,25 @@ int main(int argc, char **argv) {
 
     m_program = bgfx::createProgram(vsh, fsh, true);
 
-    // Set view 0 to the same dimensions as the window and to clear the color
-    // buffer.
+    // Set view 0 to the same dimensions as the window and to clear the
+    // color buffer.
     const bgfx::ViewId kClearView = 0;
     bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x44ff);
     bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
     size_t counter = 0;
 
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
+    while (!window.shouldClose()) {
+        window.pollEvents();
         // Handle window resize.
         int oldWidth = width, oldHeight = height;
-        glfwGetWindowSize(window, &width, &height);
+        window.getSize(&width, &height);
         if (width != oldWidth || height != oldHeight) {
             bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
-        // This dummy draw call is here to make sure that view 0 is cleared if
-        // no other draw calls are submitted to view 0.
+        // This dummy draw call is here to make sure that view 0 is cleared
+        // if no other draw calls are submitted to view 0.
         bgfx::touch(kClearView);
         // Use debug font to print information about this example.
         bgfx::dbgTextClear();
@@ -146,6 +121,9 @@ int main(int argc, char **argv) {
                             stats->width, stats->height, stats->textWidth,
                             stats->textHeight);
         // Enable stats or debug text.
+        if (keyboard.isJustPressed(GLFW_KEY_F1)) {
+            s_showStats = !s_showStats;
+        }
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_TEXT);
 
         const bx::Vec3 at = {0.0f, 0.0f, 0.0f};
@@ -161,7 +139,8 @@ int main(int argc, char **argv) {
 
         bgfx::setViewTransform(0, view, proj);
 
-        // bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
+        // bgfx::setViewRect(kClearView, 0, 0,
+        // bgfx::BackbufferRatio::Equal);
 
         bgfx::touch(0);
 
@@ -190,10 +169,11 @@ int main(int argc, char **argv) {
         bgfx::frame();
 
         counter++;
+        keyboard.updateKeys();
     }
 
     bgfx::shutdown();
-    glfwTerminate();
+    window.terminate();
 
     return 0;
 }
