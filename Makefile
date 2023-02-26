@@ -7,6 +7,7 @@ INCFLAGS += -Isubmods/bx/include
 INCFLAGS += -Isubmods/bimg/include
 INCFLAGS += -Isubmods/glfw/include
 INCFLAGS += -Isubmods/bgfx/3rdparty/fcpp
+INCFLAGS += -Isubmods/spdlog/include
 INCFLAGS += -Isrc
 
 $(info INCLFAGS: $(INCFLAGS))
@@ -32,6 +33,7 @@ LDFLAGS += $(BGFX_BIN)/libbimg$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libfcpp$(BGFX_CONFIG).a
 LDFLAGS += submods/glfw/src/libglfw3.a
+LDFLAGS += submods/spdlog/libspdlog.a
 LDFLAGS += $(INCFLAGS)
 
 SHADERS_PATH = res/shaders
@@ -43,7 +45,8 @@ SHADER_PLATFORM = linux
 
 CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
 		   -DSHADER_PLATFORM_$(SHADER_PLATFORM) \
-		   -DBX_CONFIG_DEBUG
+		   -DBX_CONFIG_DEBUG \
+		   -DBGFX_CONFIG_RENDERER_OPENGL=44
 
 .PHONY: all clean
 
@@ -52,6 +55,7 @@ all: dirs libs shaders build
 libs:
 	cd submods/bgfx && make $(BGFX_TARGET)
 	cd submods/glfw && cmake . && make
+	cd submods/spdlog && cmake . && make
 
 dirs:
 	mkdir -p ./$(BIN)

@@ -13,3 +13,6 @@
 [submodule "submods/glfw"]
 	path = submods/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "submods/spdlog"]
+	path = submods/spdlog
+	url = https://github.com/gabime/spdlog.git
