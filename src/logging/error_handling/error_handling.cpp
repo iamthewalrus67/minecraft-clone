@@ -3,7 +3,10 @@
 
 #include "error_handling.hpp"
 
-void printAndExit(const char *message) {
-    std::cerr << "FATAL: " << message << std::endl;
+#include "logging/logger/logger.hpp"
+
+void logAndExit(const char *message) {
+    Logger::instance().logCrit(message);
+    Logger::instance().flush();
     std::exit(1);
 }
