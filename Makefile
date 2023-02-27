@@ -22,6 +22,7 @@ SRC = $(shell find src -name "*.cpp")
 OBJ = $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 OBJ_DIR = obj
 BIN = bin
+BIN_NAME = game
 
 BGFX_BIN = submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin
 BGFX_CONFIG = Debug
@@ -40,7 +41,7 @@ SHADERS_PATH = res/shaders
 SHADERS	= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
 SHADERS_OUT	= $(SHADERS:.sc=.bin)
 SHADERC	= submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
-SHADER_TARGET = 330
+SHADER_TARGET = 150
 SHADER_PLATFORM = linux
 
 CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
@@ -66,6 +67,7 @@ dirs:
 	$(SHADERC)	--type $(shell echo $(notdir $@) | cut -c 1)						\
 						  -i submods/bgfx/src										\
 							--platform $(SHADER_PLATFORM)							\
+							-p $(SHADER_TARGET) 									\
 							--varyingdef $(dir $@)varying.def.sc					\
 							-f $<													\
 							-o $@
@@ -73,10 +75,10 @@ dirs:
 shaders: $(SHADERS_OUT)
 
 run: build
-	$(BIN)/game
+	$(BIN)/$(BIN_NAME)
 
 build: dirs shaders $(OBJ)
-	$(CC) -o $(BIN)/game $(filter %.o,$^) $(LDFLAGS)
+	$(CC) -o $(BIN)/$(BIN_NAME) $(filter %.o,$^) $(LDFLAGS)
 
 $(OBJ): $(OBJ_DIR)/%.o: %.cpp
 	mkdir -p $(@D)
