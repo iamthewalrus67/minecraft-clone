@@ -1,11 +1,11 @@
-#include "shader_loading/shader_loading.hpp"
+#include <iostream>
+#include <stdio.h>
+
 #include <GLFW/glfw3.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <bx/bx.h>
 #include <bx/math.h>
-#include <iostream>
-#include <stdio.h>
 #if BX_PLATFORM_LINUX
 #define GLFW_EXPOSE_NATIVE_X11
 #elif BX_PLATFORM_WINDOWS
@@ -13,10 +13,11 @@
 #elif BX_PLATFORM_OSX
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
-#include "input/keyboard/keyboard.hpp"
-#include "window/window.hpp"
 
+#include "input/keyboard/keyboard.hpp"
 #include "logging/logger/logger.hpp"
+#include "shader_loading/shader_loading.hpp"
+#include "window/window.hpp"
 
 struct PosColorVertex {
     float m_x;
