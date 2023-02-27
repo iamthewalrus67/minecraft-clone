@@ -28,6 +28,8 @@ public:
         return isJustPressed(key) || m_keyStatus[key] == GLFW_REPEAT;
     }
 
+    bool isReleased(int key) { return m_keyStatus[key] == GLFW_RELEASE; }
+
     int getKeyAction(int key) { return m_keyStatus[key]; }
     void setKeyAction(int key, int action) { m_keyStatus[key] = action; }
 
