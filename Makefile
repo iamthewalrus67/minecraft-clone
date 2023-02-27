@@ -39,10 +39,10 @@ LDFLAGS += submods/spdlog/libspdlog.a
 LDFLAGS += $(INCFLAGS)
 
 SHADERS_PATH = res/shaders
-SHADERS	= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
-SHADERS_OUT	= $(SHADERS:.sc=.bin)
-SHADERC	= submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
-SHADER_TARGET = 450
+SHADERS = $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
+SHADERS_OUT = $(SHADERS:.sc=.bin)
+SHADERC = submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
+SHADER_TARGET = 150
 SHADER_PLATFORM = linux
 
 CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
