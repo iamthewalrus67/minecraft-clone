@@ -26,6 +26,7 @@ BIN_NAME = game
 
 BGFX_BIN = submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin
 BGFX_CONFIG = Debug
+BGFX_COMPILE_FLAGS = BGFX_CONFIG=RENDERER_OPENGL=45
 
 LDFLAGS += -lX11
 LDFLAGS += -lGL
@@ -41,13 +42,12 @@ SHADERS_PATH = res/shaders
 SHADERS	= $(shell find $(SHADERS_PATH)/* | grep -E ".*/(vs|fs).*.sc")
 SHADERS_OUT	= $(SHADERS:.sc=.bin)
 SHADERC	= submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin/shaderc$(BGFX_CONFIG)
-SHADER_TARGET = 150
+SHADER_TARGET = 450
 SHADER_PLATFORM = linux
 
 CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
 		   -DSHADER_PLATFORM_$(SHADER_PLATFORM) \
 		   -DBX_CONFIG_DEBUG \
-		   -DBGFX_CONFIG_RENDERER_OPENGL=44 \
 		   -DSPDLOG_COMPILED_LIB
 
 .PHONY: all clean
@@ -55,7 +55,7 @@ CCFLAGS += -DSHARED_TARGET_$(SHADER_TARGET) \
 all: dirs libs shaders build
 
 libs:
-	cd submods/bgfx && make $(BGFX_TARGET)
+	cd submods/bgfx && make $(BGFX_TARGET) -j8 $(BGFX_COMPILE_FLAGS) 
 	cd submods/glfw && cmake . && make
 	cd submods/spdlog && cmake . && make
 
