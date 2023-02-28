@@ -7,9 +7,6 @@
 [submodule "submods/bimg"]
 	path = submods/bimg
 	url = https://github.com/bkaradzic/bimg
-[submodule "submods/bnet"]
-	path = submods/bnet
-	url = https://github.com/bkaradzic/bnet
 [submodule "submods/glfw"]
 	path = submods/glfw
 	url = https://github.com/glfw/glfw.git
