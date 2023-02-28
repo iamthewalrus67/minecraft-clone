@@ -15,6 +15,7 @@
 #endif
 
 #include "input/keyboard/keyboard.hpp"
+#include "input/mouse/mouse.hpp"
 #include "logging/logger/logger.hpp"
 #include "shader_loading/shader_loading.hpp"
 #include "window/window.hpp"
@@ -61,6 +62,7 @@ int main(int argc, char **argv) {
 
     WindowWrapper window{"minesraft", 1024, 768};
     Keyboard &keyboard = Keyboard::instance();
+    Mouse &mouse = Mouse::instance();
 
     // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to
     // create a render thread. Most graphics APIs must be used on the same
@@ -176,6 +178,7 @@ int main(int argc, char **argv) {
 
         counter++;
         keyboard.updateKeys();
+        mouse.updatePos();
     }
 
     bgfx::shutdown();
