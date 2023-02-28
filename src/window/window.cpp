@@ -6,8 +6,8 @@
 #include "GLFW/glfw3.h"
 #include "logging/logger/logger.hpp"
 
-#include "input/keyboard/keyboard.hpp"
-#include "input/mouse/mouse.hpp"
+#include "input/keyboard.hpp"
+#include "input/mouse.hpp"
 #include "logging/error_handling/error_handling.hpp"
 #include "window.hpp"
 

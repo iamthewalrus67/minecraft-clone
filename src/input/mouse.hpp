@@ -1,6 +1,8 @@
 #ifndef MOUSE_HPP
 #define MOUSE_HPP
 
+#include "input/keyboard.hpp"
+#include <GLFW/glfw3.h>
 #include <utility>
 
 class Mouse {
@@ -31,6 +33,30 @@ public:
         return {getXMovement(), getYMovement()};
     }
     std::pair<double, double> getPos() { return {m_xpos, m_ypos}; }
+
+    [[nodiscard]] bool isLeftButtonPressed() {
+        return Keyboard::instance().isPressed(GLFW_MOUSE_BUTTON_LEFT);
+    }
+
+    [[nodiscard]] bool isLeftButtonJustPressed() {
+        return Keyboard::instance().isJustPressed(GLFW_MOUSE_BUTTON_LEFT);
+    }
+
+    [[nodiscard]] bool isRightButtonPressed() {
+        return Keyboard::instance().isPressed(GLFW_MOUSE_BUTTON_RIGHT);
+    }
+
+    [[nodiscard]] bool isRightButtonJustPressed() {
+        return Keyboard::instance().isJustPressed(GLFW_MOUSE_BUTTON_RIGHT);
+    }
+
+    [[nodiscard]] bool isMiddleButtonPressed() {
+        return Keyboard::instance().isPressed(GLFW_MOUSE_BUTTON_MIDDLE);
+    }
+
+    [[nodiscard]] bool isMiddleButtonJustPressed() {
+        return Keyboard::instance().isJustPressed(GLFW_MOUSE_BUTTON_MIDDLE);
+    }
 
 private:
     Mouse() {}

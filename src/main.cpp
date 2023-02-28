@@ -14,8 +14,8 @@
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
 
-#include "input/keyboard/keyboard.hpp"
-#include "input/mouse/mouse.hpp"
+#include "input/keyboard.hpp"
+#include "input/mouse.hpp"
 #include "logging/logger/logger.hpp"
 #include "shader_loading/shader_loading.hpp"
 #include "window/window.hpp"
