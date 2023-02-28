@@ -1,6 +1,8 @@
 #ifndef MOUSE_HPP
 #define MOUSE_HPP
 
+#include <utility>
+
 class Mouse {
 public:
     static Mouse &instance() {
@@ -25,6 +27,10 @@ public:
     double getYpos() { return m_ypos; }
     double getXMovement() { return m_xpos - m_prevXpos; }
     double getYMovement() { return m_ypos - m_prevYpos; }
+    std::pair<double, double> getMovement() {
+        return {getXMovement(), getYMovement()};
+    }
+    std::pair<double, double> getPos() { return {m_xpos, m_ypos}; }
 
 private:
     Mouse() {}
