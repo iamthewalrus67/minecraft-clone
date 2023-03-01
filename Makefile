@@ -8,6 +8,7 @@ INCFLAGS += -Isubmods/bimg/include
 INCFLAGS += -Isubmods/glfw/include
 INCFLAGS += -Isubmods/bgfx/3rdparty/fcpp
 INCFLAGS += -Isubmods/spdlog/include
+INCFLAGS += -Isubmods/glm
 INCFLAGS += -Isrc
 
 $(info INCLFAGS: $(INCFLAGS))
