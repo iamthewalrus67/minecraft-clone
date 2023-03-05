@@ -1,3 +1,4 @@
+#include "glm/fwd.hpp"
 #include <iostream>
 #include <stdio.h>
 
@@ -6,6 +7,11 @@
 #include <bgfx/platform.h>
 #include <bx/bx.h>
 #include <bx/math.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #if BX_PLATFORM_LINUX
 #define GLFW_EXPOSE_NATIVE_X11
 #elif BX_PLATFORM_WINDOWS
@@ -46,8 +52,8 @@ static PosColorVertex s_cubeVertices[] = {
 };
 
 static const uint16_t s_cubeTriList[] = {
-    0, 1, 2, 1, 3, 2, 4, 6, 5, 5, 6, 7, 0, 2, 4, 4, 2, 6,
-    1, 5, 3, 5, 7, 3, 0, 4, 1, 4, 5, 1, 2, 3, 6, 6, 3, 7,
+    1, 0, 2, 3, 1, 2, 6, 4, 5, 6, 5, 7, 2, 0, 4, 2, 4, 6,
+    5, 1, 3, 7, 5, 3, 4, 0, 1, 5, 4, 1, 3, 2, 6, 3, 6, 7,
 };
 
 bgfx::VertexBufferHandle m_vbh;
@@ -138,14 +144,21 @@ int main(int argc, char **argv) {
         const bx::Vec3 eye = {0.0f, 0.0f, 10.0f};
 
         // Set view and projection matrix for view 0.
-        float view[16];
-        bx::mtxLookAt(view, eye, at);
+        // float view[16];
+        // bx::mtxLookAt(view, eye, at);
+        glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 0.0f, -10.0f),
+                                     glm::vec3(0.0f, 0.0f, 0.0f),
+                                     glm::vec3(0.0f, 1.0f, 0.0f));
 
         float proj[16];
         bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 100.0f,
                     bgfx::getCaps()->homogeneousDepth);
 
-        bgfx::setViewTransform(0, view, proj);
+        glm::mat4 projMat = glm::perspective(
+            glm::radians(60.0f), float(width) / float(height), 0.01f, 100.0f);
+
+        bgfx::setViewTransform(0, glm::value_ptr(view),
+                               glm::value_ptr(projMat));
 
         // bgfx::setViewRect(kClearView, 0, 0,
         // bgfx::BackbufferRatio::Equal);
