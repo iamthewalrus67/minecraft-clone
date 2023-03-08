@@ -1,11 +1,18 @@
-#include "shader_loading/shader_loading.hpp"
+#include "glm/fwd.hpp"
+#include <iostream>
+#include <stdio.h>
+
 #include <GLFW/glfw3.h>
 #include <bgfx/bgfx.h>
 #include <bgfx/platform.h>
 #include <bx/bx.h>
 #include <bx/math.h>
-#include <iostream>
-#include <stdio.h>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 #if BX_PLATFORM_LINUX
 #define GLFW_EXPOSE_NATIVE_X11
 #elif BX_PLATFORM_WINDOWS
@@ -13,10 +20,14 @@
 #elif BX_PLATFORM_OSX
 #define GLFW_EXPOSE_NATIVE_COCOA
 #endif
-#include "input/keyboard/keyboard.hpp"
+
+#include "input/keyboard.hpp"
+#include "input/mouse.hpp"
+#include "logging/logger/logger.hpp"
+#include "shader_loading/shader_loading.hpp"
 #include "window/window.hpp"
 
-#include "logging/logger/logger.hpp"
+#include "controllers/camera/flying_camera_controller.hpp"
 
 struct PosColorVertex {
     float m_x;
@@ -44,8 +55,8 @@ static PosColorVertex s_cubeVertices[] = {
 };
 
 static const uint16_t s_cubeTriList[] = {
-    0, 1, 2, 1, 3, 2, 4, 6, 5, 5, 6, 7, 0, 2, 4, 4, 2, 6,
-    1, 5, 3, 5, 7, 3, 0, 4, 1, 4, 5, 1, 2, 3, 6, 6, 3, 7,
+    1, 0, 2, 3, 1, 2, 6, 4, 5, 6, 5, 7, 2, 0, 4, 2, 4, 6,
+    5, 1, 3, 7, 5, 3, 4, 0, 1, 5, 4, 1, 3, 2, 6, 3, 6, 7,
 };
 
 bgfx::VertexBufferHandle m_vbh;
@@ -55,11 +66,13 @@ bgfx::ProgramHandle m_program;
 bool s_showStats = false;
 
 int main(int argc, char **argv) {
+    // Logger init
     Logger::instance().init();
     Logger::setDebugMode(true);
 
     WindowWrapper window{"minesraft", 1024, 768};
     Keyboard &keyboard = Keyboard::instance();
+    Mouse &mouse = Mouse::instance();
 
     // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to
     // create a render thread. Most graphics APIs must be used on the same
@@ -102,6 +115,17 @@ int main(int argc, char **argv) {
     bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x44ff);
     bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
+    // Camera init
+    control::FlyingCameraController camController{
+        60.0f,
+        {(int)window.getSize().first, (int)window.getSize().second},
+        {0.0f, 0.0f, 10.0f}};
+
+    rend::Camera cam{60.0f,
+                     (int)window.getSize().first,
+                     (int)window.getSize().second,
+                     {0.0f, 0.0f, 10.0f}};
+
     size_t counter = 0;
 
     while (!window.shouldClose()) {
@@ -131,18 +155,14 @@ int main(int argc, char **argv) {
         }
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_TEXT);
 
-        const bx::Vec3 at = {0.0f, 0.0f, 0.0f};
-        const bx::Vec3 eye = {0.0f, 0.0f, 10.0f};
+        // camController.getCamera()->addRotation(
+        // glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f));
 
-        // Set view and projection matrix for view 0.
-        float view[16];
-        bx::mtxLookAt(view, eye, at);
+        camController.captureInputAndApply();
 
-        float proj[16];
-        bx::mtxProj(proj, 60.0f, float(width) / float(height), 0.1f, 100.0f,
-                    bgfx::getCaps()->homogeneousDepth);
-
-        bgfx::setViewTransform(0, view, proj);
+        bgfx::setViewTransform(
+            0, glm::value_ptr(camController.camera.getViewMatrix()),
+            glm::value_ptr(camController.camera.getProjectionMatrix()));
 
         // bgfx::setViewRect(kClearView, 0, 0,
         // bgfx::BackbufferRatio::Equal);
@@ -150,7 +170,7 @@ int main(int argc, char **argv) {
         bgfx::touch(0);
 
         float mtx[16];
-        bx::mtxRotateY(mtx, counter * 0.03f);
+        bx::mtxRotateY(mtx, counter * 0.00f);
 
         // position x,y,z
         mtx[12] = 0.0f;
@@ -175,6 +195,7 @@ int main(int argc, char **argv) {
 
         counter++;
         keyboard.updateKeys();
+        mouse.updatePos();
     }
 
     bgfx::shutdown();

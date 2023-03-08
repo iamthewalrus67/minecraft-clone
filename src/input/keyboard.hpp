@@ -24,20 +24,22 @@ public:
                m_keyStatusPrev[key] == GLFW_PRESS;
     }
 
-    bool isPressed(int key) {
-        return isJustPressed(key) || m_keyStatus[key] == GLFW_REPEAT;
-    }
+    bool isPressed(int key) { return isJustPressed(key) || m_keyStatus[key]; }
+
+    bool isReleased(int key) { return !m_keyStatus[key]; }
 
     int getKeyAction(int key) { return m_keyStatus[key]; }
-    void setKeyAction(int key, int action) { m_keyStatus[key] = action; }
+    void setKeyAction(int key, int action) {
+        m_keyStatus[key] = (action == GLFW_PRESS || action == GLFW_REPEAT);
+    }
 
     void updateKeys() { m_keyStatusPrev = m_keyStatus; }
 
 private:
     Keyboard() {}
 
-    std::unordered_map<int, int> m_keyStatus{};
-    std::unordered_map<int, int> m_keyStatusPrev{};
+    std::unordered_map<int, bool> m_keyStatus{};
+    std::unordered_map<int, bool> m_keyStatusPrev{};
 };
 
 #endif // KEYBOARD_HPP
