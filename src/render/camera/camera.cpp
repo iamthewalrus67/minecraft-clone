@@ -1,7 +1,9 @@
 #include <glm/gtx/euler_angles.hpp>
+#include <iostream>
 
 #include "camera.hpp"
 #include "glm/ext/scalar_constants.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 namespace rend {
 Camera::Camera(float fov, int screenWidth, int screenHeight,
@@ -45,5 +47,6 @@ void Camera::updateViewMatrix() {
     m_rightDir = rotationMat * glm::vec4(RIGHT_DIR, 0.0f);
 
     m_view = glm::lookAt(m_position, m_position + m_frontDir, m_upDir);
+    std::cout << glm::to_string(m_view) << std::endl;
 }
 } // namespace rend

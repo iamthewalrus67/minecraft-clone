@@ -27,7 +27,7 @@
 #include "shader_loading/shader_loading.hpp"
 #include "window/window.hpp"
 
-#include "render/camera.hpp"
+#include "controllers/camera/flying_camera_controller.hpp"
 
 struct PosColorVertex {
     float m_x;
@@ -116,6 +116,11 @@ int main(int argc, char **argv) {
     bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
     // Camera init
+    control::FlyingCameraController camController{
+        60.0f,
+        {(int)window.getSize().first, (int)window.getSize().second},
+        {0.0f, 0.0f, 10.0f}};
+
     rend::Camera cam{60.0f,
                      (int)window.getSize().first,
                      (int)window.getSize().second,
@@ -150,13 +155,14 @@ int main(int argc, char **argv) {
         }
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_TEXT);
 
-        std::cout << glm::to_string(cam.getViewMatrix()) << std::endl;
+        // camController.getCamera()->addRotation(
+        // glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f));
 
-        cam.addRotation(
-            glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f));
+        camController.captureInputAndApply();
 
-        bgfx::setViewTransform(0, glm::value_ptr(cam.getViewMatrix()),
-                               glm::value_ptr(cam.getProjectionMatrix()));
+        bgfx::setViewTransform(
+            0, glm::value_ptr(camController.camera.getViewMatrix()),
+            glm::value_ptr(camController.camera.getProjectionMatrix()));
 
         // bgfx::setViewRect(kClearView, 0, 0,
         // bgfx::BackbufferRatio::Equal);

@@ -17,8 +17,8 @@ public:
     void addRotation(const glm::vec3 &angles);
     void addRelativeOffset(const glm::vec3 &offset);
 
-    [[nodiscard]] glm::mat4 getProjectionMatrix() { return m_projection; };
-    [[nodiscard]] glm::mat4 getViewMatrix() { return m_view; };
+    [[nodiscard]] glm::mat4 &getProjectionMatrix() { return m_projection; };
+    [[nodiscard]] glm::mat4 &getViewMatrix() { return m_view; };
 
 private:
     //! Update view matrix, called at every camera state change
