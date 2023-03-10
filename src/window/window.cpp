@@ -19,8 +19,14 @@ static void glfw_errorCallback(int error, const char *description) {
 
 static void glfw_keyCallback(GLFWwindow *window, int key, int scancode,
                              int action, int mods) {
-    auto &keyboard = Keyboard::instance();
+    Keyboard &keyboard = Keyboard::instance();
     keyboard.setKeyAction(key, action);
+}
+
+static void glfw_mouseButtonCallback(GLFWwindow *window, int button, int action,
+                                     int mods) {
+    Keyboard &keyboard = Keyboard::instance();
+    keyboard.setKeyAction(button, action);
 }
 
 static void glfw_mouseCursorCallback(GLFWwindow *window, double xpos,
@@ -42,5 +48,6 @@ WindowWrapper::WindowWrapper(const char *title, uint32_t width,
         logAndExit("Failed to create glfw window");
     }
     glfwSetKeyCallback(m_window, glfw_keyCallback);
+    glfwSetMouseButtonCallback(m_window, glfw_mouseButtonCallback);
     glfwSetCursorPosCallback(m_window, glfw_mouseCursorCallback);
 }

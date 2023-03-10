@@ -48,6 +48,15 @@ public:
 
     GLFWwindow *getGLFWWindow() { return m_window; }
 
+    void setCaptureCursor(bool capture) {
+        glfwSetInputMode(m_window, GLFW_CURSOR,
+                         capture ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+    }
+
+    bool isCursorCaptured() {
+        return glfwGetInputMode(m_window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED;
+    }
+
 private:
     int m_width, m_height;
     GLFWwindow *m_window;
