@@ -71,6 +71,7 @@ int main(int argc, char **argv) {
     Logger::setDebugMode(true);
 
     WindowWrapper window{"minesraft", 1024, 768};
+    window.setCaptureCursor(true);
     Keyboard &keyboard = Keyboard::instance();
     Mouse &mouse = Mouse::instance();
 
@@ -137,6 +138,14 @@ int main(int argc, char **argv) {
             bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
         }
+
+        if (mouse.isLeftButtonJustPressed()) {
+            window.setCaptureCursor(true);
+        }
+        if (keyboard.isJustPressed(GLFW_KEY_ESCAPE)) {
+            window.setCaptureCursor(false);
+        }
+
         // This dummy draw call is here to make sure that view 0 is cleared
         // if no other draw calls are submitted to view 0.
         bgfx::touch(kClearView);
