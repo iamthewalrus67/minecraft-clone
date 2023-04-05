@@ -8,7 +8,7 @@
 namespace rend {
 Camera::Camera(float fov, int screenWidth, int screenHeight,
                const glm::vec3 &position)
-    : m_position{position}, m_rotation{0.0f, 0.0f, 0.0f} {
+    : m_fov{fov}, m_position{position}, m_rotation{0.0f, 0.0f, 0.0f} {
     setProjectionMatrix(fov, screenWidth, screenHeight);
     updateViewMatrix();
 }
@@ -19,6 +19,10 @@ void Camera::setProjectionMatrix(float fov, float screenWidth,
                                     static_cast<float>(screenWidth) /
                                         static_cast<float>(screenHeight),
                                     0.1f, 100.0f);
+}
+
+void Camera::updateScreenSize(float screenWidth, float screenHeight) {
+    setProjectionMatrix(m_fov, screenWidth, screenHeight);
 }
 
 void Camera::addRotation(const glm::vec3 &angles) {
@@ -47,6 +51,5 @@ void Camera::updateViewMatrix() {
     m_rightDir = rotationMat * glm::vec4(RIGHT_DIR, 0.0f);
 
     m_view = glm::lookAt(m_position, m_position + m_frontDir, m_upDir);
-    std::cout << glm::to_string(m_view) << std::endl;
 }
 } // namespace rend

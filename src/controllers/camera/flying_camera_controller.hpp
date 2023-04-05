@@ -39,10 +39,14 @@ public:
     //! respective movement to the camera
     void captureInputAndApply();
 
-    rend::Camera &getCamera() { return camera; }
+    //! Update the projection matrix of internal camera to fit the new screen
+    //! size at resize
+    void updateScreenSize(float screenWidth, float screenHeight);
 
-public:
-    rend::Camera camera;
+    rend::Camera &getCamera() { return m_camera; }
+
+private:
+    rend::Camera m_camera;
 
 private:
     //! Handle Camera movement

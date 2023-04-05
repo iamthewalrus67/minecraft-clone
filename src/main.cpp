@@ -122,11 +122,6 @@ int main(int argc, char **argv) {
         {(int)window.getSize().first, (int)window.getSize().second},
         {0.0f, 0.0f, 10.0f}};
 
-    rend::Camera cam{60.0f,
-                     (int)window.getSize().first,
-                     (int)window.getSize().second,
-                     {0.0f, 0.0f, 10.0f}};
-
     size_t counter = 0;
 
     while (!window.shouldClose()) {
@@ -137,6 +132,7 @@ int main(int argc, char **argv) {
         if (width != oldWidth || height != oldHeight) {
             bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
+            camController.updateScreenSize(width, height);
         }
 
         if (mouse.isLeftButtonJustPressed()) {
@@ -164,14 +160,11 @@ int main(int argc, char **argv) {
         }
         bgfx::setDebug(s_showStats ? BGFX_DEBUG_STATS : BGFX_DEBUG_TEXT);
 
-        // camController.getCamera()->addRotation(
-        // glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f));
-
         camController.captureInputAndApply();
 
         bgfx::setViewTransform(
-            0, glm::value_ptr(camController.camera.getViewMatrix()),
-            glm::value_ptr(camController.camera.getProjectionMatrix()));
+            0, glm::value_ptr(camController.getCamera().getViewMatrix()),
+            glm::value_ptr(camController.getCamera().getProjectionMatrix()));
 
         // bgfx::setViewRect(kClearView, 0, 0,
         // bgfx::BackbufferRatio::Equal);
