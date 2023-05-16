@@ -19,6 +19,8 @@ public:
     WindowWrapper(const char *title, uint32_t width, uint32_t height);
     ~WindowWrapper() = default;
 
+    void init();
+
     std::pair<uint32_t, uint32_t> getSize() {
         glfwGetWindowSize(m_window, &m_width, &m_height);
         return std::pair{m_width, m_height};
@@ -58,6 +60,7 @@ public:
     }
 
 private:
+    const char *m_title;
     int m_width, m_height;
     GLFWwindow *m_window;
 };
