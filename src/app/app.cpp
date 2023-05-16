@@ -63,13 +63,9 @@ bgfx::ProgramHandle m_program;
 
 bool s_showStats = false;
 
-App::App(const char *title, uint32_t width, uint32_t height): m_window(title, width, height) {
-    init();
-}
+App::App(const char *title, uint32_t width, uint32_t height): m_window(title, width, height) {}
 
-App::~App() {
-    terminate();
-}
+App::~App() {}
 
 void App::init() {
 

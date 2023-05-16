@@ -9,11 +9,10 @@ public:
     ~App();
 
     void start();
-private:
-    WindowWrapper m_window;
-
     void init();
     void terminate();
+private:
+    WindowWrapper m_window;
 };
 
 #endif // APP_HPP
