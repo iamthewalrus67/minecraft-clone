@@ -36,18 +36,22 @@ static void glfw_mouseCursorCallback(GLFWwindow *window, double xpos,
 }
 
 WindowWrapper::WindowWrapper(const char *title, uint32_t width,
-                             uint32_t height) {
+                             uint32_t height): m_title(title), m_width(width), m_height(height) {}
+
+void WindowWrapper::init() {
     glfwSetErrorCallback(glfw_errorCallback);
     if (!glfwInit()) {
         logAndExit("Failed to initialize glfw");
     }
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    m_window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+    m_window = glfwCreateWindow(m_width, m_height, m_title, nullptr, nullptr);
     if (!m_window) {
         logAndExit("Failed to create glfw window");
     }
     glfwSetKeyCallback(m_window, glfw_keyCallback);
     glfwSetMouseButtonCallback(m_window, glfw_mouseButtonCallback);
     glfwSetCursorPosCallback(m_window, glfw_mouseCursorCallback);
+
+    setCaptureCursor(true);
 }

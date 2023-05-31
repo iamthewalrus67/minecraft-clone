@@ -29,13 +29,13 @@ BGFX_BIN = submods/bgfx/.build/$(BGFX_DEPS_TARGET)/bin
 BGFX_CONFIG = Debug
 BGFX_COMPILE_FLAGS = BGFX_CONFIG=RENDERER_OPENGL=45
 
-LDFLAGS += -lX11
+LDFLAGS += submods/glfw/src/libglfw3.a
 LDFLAGS += -lGL
+LDFLAGS += -lX11
 LDFLAGS += $(BGFX_BIN)/libbgfx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbimg$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libbx$(BGFX_CONFIG).a
 LDFLAGS += $(BGFX_BIN)/libfcpp$(BGFX_CONFIG).a
-LDFLAGS += submods/glfw/src/libglfw3.a
 LDFLAGS += submods/spdlog/libspdlog.a
 LDFLAGS += $(INCFLAGS)
 
