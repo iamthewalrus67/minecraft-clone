@@ -3,6 +3,8 @@
 #include <bx/bx.h>
 #include <bx/math.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "cube_renderer.hpp"
 
 #include "shader_loading/shader_loading.hpp"
@@ -18,8 +20,8 @@ namespace rend {
                     {glm::vec3{ 1.0f, -1.0f,  1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{-1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{ 1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
-                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
-                    {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
+                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 12.0f} },
+                    {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
             };
 
     static const uint16_t s_cubeIndices[] = {
@@ -93,11 +95,12 @@ namespace rend {
             for (uint32_t w = 0; w < width; ++w) {
                 for (uint32_t l = 0; l < length; ++l) {
                     for (uint32_t h = 0; h < height; ++h) {
-                        float* mtx = (float*)data;
-                        bx::mtxRotateY(mtx, 0.00f);
-                        mtx[12] = i * width * 2.0f + w * 2.0f;
-                        mtx[13] = -15.0f + h * 2.0f;
-                        mtx[14] = -15.0f + l * 2.0f;
+                        glm::mat4* mtx = (glm::mat4*)data;
+                        *mtx = glm::translate(glm::mat4{1.0f}, glm::vec3{
+                            i * width * 2.0f + w * 2.0f,
+                            -15.0f + h * 2.0f,
+                            -15.0f + l * 2.0f
+                        });
 
                         data += instanceStride;
                     }
