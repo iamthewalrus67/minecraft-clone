@@ -1,5 +1,7 @@
 #include "chunk_renderer.hpp"
 
+#include "render/util/direction.hpp"
+
 #include "shader_loading/shader_loading.hpp"
 
 namespace rend {
@@ -13,34 +15,33 @@ namespace rend {
                 .end();
     }
 
-    static glm::vec3 CHUNK_VERTICES[8] =
-            {
-                    glm::vec3{-1.0f,  1.0f,  1.0f},
-                    glm::vec3{ 1.0f,  1.0f,  1.0f},
-                    glm::vec3{-1.0f, -1.0f,  1.0f},
-                    glm::vec3{ 1.0f, -1.0f,  1.0f},
-                    glm::vec3{-1.0f,  1.0f, -1.0f},
-                    glm::vec3{ 1.0f,  1.0f, -1.0f},
-                    glm::vec3{-1.0f, -1.0f, -1.0f},
-                    glm::vec3{ 1.0f, -1.0f, -1.0f},
-            };
+
+// indices, within each list of 6 cube indices, which represent are the 4
+// unique vertices which make up each face
+    static const size_t UNIQUE_INDICES[] = {0, 1, 2, 5};
+
+// indices into emitted vertices which make up the two faces for a cube face
+    static const size_t FACE_INDICES[] = {0, 1, 2, 0, 2, 3};
 
     static const size_t CHUNK_INDICES[] = {
-            1, 0, 2,    // front face up +Z
-            3, 1, 2,    // front face bottom +Z
-            6, 4, 5,    // back face up -Z
-            6, 5, 7,    // back face bottom -Z
-            2, 0, 4,    // left face up -X
-            2, 4, 6,    // left face bottom -X
-            5, 1, 3,    // right face up +X
-            7, 5, 3,    // right face bottom +X
-            4, 0, 1,    // up face bottom +Y
-            5, 4, 1,    // up face top +Y
-            3, 2, 6,    // bottom face bottom -Y
-            3, 6, 7     // bottom face top +Y
+            4, 7, 6, 4, 6, 5, // (south (+z))
+            3, 0, 1, 3, 1, 2, // (north (-z))
+            7, 3, 2, 7, 2, 6, // (east  (+x))
+            0, 4, 5, 0, 5, 1, // (west  (-x))
+            2, 1, 5, 2, 5, 6, // (up    (+y))
+            0, 3, 7, 0, 7, 4  // (down  (-y))
     };
 
-    static const size_t FACE_INDICES[] = {2, 0, 1, 3, 2, 1};
+    static const glm::vec3 CHUNK_VERTICES[] = {
+            glm::vec3(-1, -1, -1),
+            glm::vec3(-1, 1, -1),
+            glm::vec3(1, 1, -1),
+            glm::vec3(1, -1, -1),
+            glm::vec3(-1, -1, 1),
+            glm::vec3(-1, 1, 1),
+            glm::vec3(1, 1, 1),
+            glm::vec3(1, -1, 1)
+    };
 
     void ChunkRenderer::init() {
         ChunkVertex::init();
@@ -68,47 +69,55 @@ namespace rend {
     }
 
     void ChunkRenderer::render() {
-        m_vertices.clear();
-        m_indices.clear();
+        if (!m_initedTemp) {
+            m_vertices.clear();
+            m_indices.clear();
 
-        glm::vec3 blockPos;
-        for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
-            for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {
-                for (uint32_t d = 0; d < Chunk::DEPTH_Z; ++d) {
-                    auto bIdx = glm::vec3{w, h, d};
-                    m_chunk.positionOf(&blockPos, bIdx);
+            glm::vec3 blockPos;
+            for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
+                for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {
+                    for (uint32_t d = 0; d < Chunk::DEPTH_Z; ++d) {
+                        auto bIdx = glm::vec3{w, h, d};
+                        m_chunk.positionOf(&blockPos, bIdx);
 
-                    const size_t offset = m_vertices.size();
+                        for (size_t i = 0; i < 6; ++i) {
+                            util::Direction dir{static_cast<util::Direction::INDEX>(i)};
 
-                    // emit vertices
-                    int a[]{0, 1, 2, 3};
-                    for (size_t i = 0; i < 4; i++) {
-                        ChunkRenderer::ChunkVertex vertex;
-                        vertex.pos = blockPos + CHUNK_VERTICES[a[i]];
-                        vertex.color = glm::vec3{1.0f, 0.0f, 0.0f};
-                        m_vertices.push_back(vertex);
+                            const size_t offset = m_vertices.size();
+
+                            if (m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) && !m_chunk.isBlockAir(bIdx)) {
+                                // emit vertices
+                                for (size_t i = 0; i < 4; i++) {
+                                    ChunkRenderer::ChunkVertex vertex;
+                                    vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
+                                    vertex.color = glm::vec3{1.0f, 0.0f, 0.0f};
+                                    m_vertices.push_back(vertex);
+                                }
+
+                                // emit indices
+                                for (size_t i : FACE_INDICES) {
+                                    m_indices.push_back(offset + i);
+                                }
+                            }
+                        }
+
                     }
-
-                    // emit indices
-                    for (size_t i : FACE_INDICES) {
-                        m_indices.push_back(offset + i);
-                    }
-
                 }
             }
+
+            //! Update the dynamic vertex buffer if chunk changed
+            bgfx::update(m_dynamicVBH, 0,
+                         bgfx::copy(
+                                 &m_vertices[0],
+                                 m_vertices.size() * sizeof(m_vertices[0])));
+
+            //! Update the dynamic index buffer if chunk changed
+            bgfx::update(m_dynamicIBH, 0,
+                         bgfx::copy(
+                                 &m_indices[0],
+                                 m_indices.size() * sizeof(m_indices[0])));
+            m_initedTemp = true;
         }
-
-        //! Update the dynamic vertex buffer if chunk changed
-        bgfx::update(m_dynamicVBH, 0,
-                     bgfx::copy(
-                        &m_vertices[0],
-                        m_vertices.size() * sizeof(m_vertices[0])));
-
-        //! Update the dynamic index buffer if chunk changed
-        bgfx::update(m_dynamicIBH, 0,
-                     bgfx::copy(
-                        &m_indices[0],
-                        m_indices.size() * sizeof(m_indices[0])));
 
         // Set vertex and index buffer.
         bgfx::setVertexBuffer(0, m_dynamicVBH);

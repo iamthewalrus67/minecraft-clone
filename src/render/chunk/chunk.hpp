@@ -36,8 +36,11 @@ namespace rend {
 
         //! Get the BlockID ref at the positiov provided by the ivec
         BlockID& operator[](const glm::ivec3& pos);
+        const BlockID &operator[](const glm::ivec3 &pos) const;
         //! Get the actual position of a singular block based on chunk position
         void positionOf(glm::vec3* posToFill, const glm::ivec3& posInChunk);
+
+        [[nodiscard]] bool isBlockAir(const glm::ivec3& posInChunk) const;
     private:
         std::array<BlockID, WIDTH_X * HEIGHT_Y * DEPTH_Z> m_data;
         glm::vec3 m_positionBL;

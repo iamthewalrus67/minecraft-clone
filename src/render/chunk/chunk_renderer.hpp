@@ -42,6 +42,8 @@ namespace rend {
         bgfx::ProgramHandle m_programTemp;
     private:
         Chunk m_chunk{glm::vec3{16.0f, 0.0f, -32.0f}};
+
+        bool m_initedTemp = false;
     };
 } // rend
 
