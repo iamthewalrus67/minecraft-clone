@@ -74,46 +74,49 @@ namespace rend {
         // to total number of instances to draw
         const uint32_t width = 32;
         const uint32_t length = 32;
-        const uint32_t height = 64;
+        const uint32_t height = 32;
         const uint32_t totalCubes = width * length * height;
 
-        // figure out how big of a buffer is available
-        uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
+        for (uint32_t i = 0; i < 10; ++i) {
+            // figure out how big of a buffer is available
+            uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
 
-        // save how many we couldn't draw due to buffer room so we can display it
-        auto missing = totalCubes - drawnCubes;
+            if (drawnCubes != totalCubes) { continue; }
+            // save how many we couldn't draw due to buffer room so we can display it
+            auto missing = totalCubes - drawnCubes;
 
-        bgfx::InstanceDataBuffer idb;
-        bgfx::allocInstanceDataBuffer(&idb, drawnCubes, instanceStride);
+            bgfx::InstanceDataBuffer idb;
+            bgfx::allocInstanceDataBuffer(&idb, drawnCubes, instanceStride);
 
-        uint8_t* data = idb.data;
+            uint8_t* data = idb.data;
 
-        for (uint32_t w = 0; w < width; ++w) {
-            for (uint32_t l = 0; l < length; ++l) {
-                for (uint32_t h = 0; h < height; ++h) {
-                    float* mtx = (float*)data;
-                    bx::mtxRotateY(mtx, 0.00f);
-                    mtx[12] = -15.0f + w * 2.0f;
-                    mtx[13] = -15.0f + h * 2.0f;
-                    mtx[14] = -15.0f + l * 2.0f;
+            for (uint32_t w = 0; w < width; ++w) {
+                for (uint32_t l = 0; l < length; ++l) {
+                    for (uint32_t h = 0; h < height; ++h) {
+                        float* mtx = (float*)data;
+                        bx::mtxRotateY(mtx, 0.00f);
+                        mtx[12] = i * width * 2.0f + w * 2.0f;
+                        mtx[13] = -15.0f + h * 2.0f;
+                        mtx[14] = -15.0f + l * 2.0f;
 
-                    data += instanceStride;
+                        data += instanceStride;
+                    }
                 }
             }
+
+            // Set vertex and index buffer.
+            bgfx::setVertexBuffer(0, m_vbh);
+            bgfx::setIndexBuffer(m_ibh);
+
+            // Set instance data buffer.
+            bgfx::setInstanceDataBuffer(&idb);
+
+            // Set render states.
+            bgfx::setState(BGFX_STATE_DEFAULT);
+
+            // Submit primitive for rendering to view 0.
+            bgfx::submit(0, m_program);
         }
-
-        // Set vertex and index buffer.
-        bgfx::setVertexBuffer(0, m_vbh);
-        bgfx::setIndexBuffer(m_ibh);
-
-        // Set instance data buffer.
-        bgfx::setInstanceDataBuffer(&idb);
-
-        // Set render states.
-        bgfx::setState(BGFX_STATE_DEFAULT);
-
-        // Submit primitive for rendering to view 0.
-        bgfx::submit(0, m_program);
     }
 
 } // rend
