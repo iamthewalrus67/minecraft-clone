@@ -101,6 +101,8 @@ void App::start() {
     Keyboard &keyboard = Keyboard::instance();
     Mouse &mouse = Mouse::instance();
 
+    m_renderer.init();
+
     // Cube definition
     PosColorVertex::init();
     m_vbh = bgfx::createVertexBuffer(
@@ -179,26 +181,28 @@ void App::start() {
 
         bgfx::touch(0);
 
-        float mtx[16];
-        bx::mtxRotateY(mtx, counter * 0.00f);
+//        float mtx[16];
+//        bx::mtxRotateY(mtx, counter * 0.00f);
+//
+//        // position x,y,z
+//        mtx[12] = 0.0f;
+//        mtx[13] = 0.0f;
+//        mtx[14] = 0.0f;
+//
+//        // Set model matrix for rendering.
+//        bgfx::setTransform(mtx);
+//
+//        // Set vertex and index buffer.
+//        bgfx::setVertexBuffer(0, m_vbh);
+//        bgfx::setIndexBuffer(m_ibh);
+//
+//        // Set render states.
+//        bgfx::setState(BGFX_STATE_DEFAULT);
+//
+//        // Submit primitive for rendering to view 0.
+//        bgfx::submit(0, m_program);
 
-        // position x,y,z
-        mtx[12] = 0.0f;
-        mtx[13] = 0.0f;
-        mtx[14] = 0.0f;
-
-        // Set model matrix for rendering.
-        bgfx::setTransform(mtx);
-
-        // Set vertex and index buffer.
-        bgfx::setVertexBuffer(0, m_vbh);
-        bgfx::setIndexBuffer(m_ibh);
-
-        // Set render states.
-        bgfx::setState(BGFX_STATE_DEFAULT);
-
-        // Submit primitive for rendering to view 0.
-        bgfx::submit(0, m_program);
+        m_renderer.render();
 
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();

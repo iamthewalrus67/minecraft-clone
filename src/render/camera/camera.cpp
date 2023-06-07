@@ -18,7 +18,7 @@ void Camera::setProjectionMatrix(float fov, float screenWidth,
     m_projection = glm::perspective(glm::radians(fov),
                                     static_cast<float>(screenWidth) /
                                         static_cast<float>(screenHeight),
-                                    0.1f, 100.0f);
+                                    0.1f, 1000.0f);
 }
 
 void Camera::updateScreenSize(float screenWidth, float screenHeight) {

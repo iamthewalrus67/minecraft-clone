@@ -2,6 +2,7 @@
 #define APP_HPP
 
 #include "window/window.hpp"
+#include "render/renderer/cube_renderer.hpp"
 
 class App {
 public:
@@ -13,6 +14,7 @@ public:
     void terminate();
 private:
     WindowWrapper m_window;
+    rend::CubeRenderer m_renderer;
 };
 
 #endif // APP_HPP
