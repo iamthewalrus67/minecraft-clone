@@ -22,21 +22,20 @@ namespace rend {
                     {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
             };
 
-    static const uint16_t s_cubeIndices[36] =
-            {
-                    0, 1, 2, // 0
-                    1, 3, 2,
-                    4, 6, 5, // 2
-                    5, 6, 7,
-                    0, 2, 4, // 4
-                    4, 2, 6,
-                    1, 5, 3, // 6
-                    5, 7, 3,
-                    0, 4, 1, // 8
-                    4, 5, 1,
-                    2, 3, 6, // 10
-                    6, 3, 7,
-            };
+    static const uint16_t s_cubeIndices[] = {
+            1, 0, 2,
+            3, 1, 2,
+            6, 4, 5,
+            6, 5, 7,
+            2, 0, 4,
+            2, 4, 6,
+            5, 1, 3,
+            7, 5, 3,
+            4, 0, 1,
+            5, 4, 1,
+            3, 2, 6,
+            3, 6, 7
+    };
 
     bgfx::VertexLayout CubeRenderer::CubeVertex::layout;
 
@@ -96,8 +95,8 @@ namespace rend {
 
             float* mtx = (float*)data;
             bx::mtxRotateY(mtx, 0.00f);
-            mtx[12] = -15.0f + float(xx) * 3.0f;
-            mtx[13] = -15.0f + float(yy) * 3.0f;
+            mtx[12] = -15.0f + float(xx) * 2.0f;
+            mtx[13] = -15.0f + float(yy) * 2.0f;
             mtx[14] = 0.0f;
 
             float* color = (float*)&data[64];
