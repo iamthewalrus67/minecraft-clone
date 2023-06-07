@@ -18,8 +18,8 @@ namespace rend {
                     {glm::vec3{ 1.0f, -1.0f,  1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{-1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{ 1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
-                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
-                    {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
+                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
+                    {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
             };
 
     static const uint16_t s_cubeIndices[] = {
@@ -70,42 +70,36 @@ namespace rend {
 
     void CubeRenderer::render() {
         // 80 bytes stride = 64 bytes for 4x4 matrix + 16 bytes for RGBA color.
-        const uint16_t instanceStride = 80;
+        const uint16_t instanceStride = 64;
         // to total number of instances to draw
         const uint32_t width = 32;
         const uint32_t length = 32;
-        const uint32_t totalCubes = width * length;
+        const uint32_t height = 64;
+        const uint32_t totalCubes = width * length * height;
 
         // figure out how big of a buffer is available
         uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
 
         // save how many we couldn't draw due to buffer room so we can display it
         auto missing = totalCubes - drawnCubes;
-        std::cout << missing << std::endl;
 
         bgfx::InstanceDataBuffer idb;
         bgfx::allocInstanceDataBuffer(&idb, drawnCubes, instanceStride);
 
         uint8_t* data = idb.data;
 
-        for (uint32_t ii = 0; ii < drawnCubes; ++ii)
-        {
-            uint32_t yy = ii / width;
-            uint32_t xx = ii % width;
+        for (uint32_t w = 0; w < width; ++w) {
+            for (uint32_t l = 0; l < length; ++l) {
+                for (uint32_t h = 0; h < height; ++h) {
+                    float* mtx = (float*)data;
+                    bx::mtxRotateY(mtx, 0.00f);
+                    mtx[12] = -15.0f + w * 2.0f;
+                    mtx[13] = -15.0f + h * 2.0f;
+                    mtx[14] = -15.0f + l * 2.0f;
 
-            float* mtx = (float*)data;
-            bx::mtxRotateY(mtx, 0.00f);
-            mtx[12] = -15.0f + float(xx) * 2.0f;
-            mtx[13] = -15.0f + float(yy) * 2.0f;
-            mtx[14] = 0.0f;
-
-            float* color = (float*)&data[64];
-            color[0] = 1.0f;
-            color[1] = 0.0f;
-            color[2] = 0.0f;
-            color[3] = 1.0f;
-
-            data += instanceStride;
+                    data += instanceStride;
+                }
+            }
         }
 
         // Set vertex and index buffer.
