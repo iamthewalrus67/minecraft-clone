@@ -68,58 +68,62 @@ namespace rend {
         bgfx::ShaderHandle fsh = loadShader("res/shaders/instancing/fs_instancing.bin");
 
         m_program = bgfx::createProgram(vsh, fsh, true);
+
+        initTestChunk(&m_chunk);
     }
 
     void CubeRenderer::render() {
         // 80 bytes stride = 64 bytes for 4x4 matrix + 16 bytes for RGBA color.
-        const uint16_t instanceStride = 64;
-        // to total number of instances to draw
-        const uint32_t width = 32;
-        const uint32_t length = 32;
-        const uint32_t height = 32;
-        const uint32_t totalCubes = width * length * height;
+        const uint16_t instanceStride = 80;
 
-        for (uint32_t i = 0; i < 10; ++i) {
-            // figure out how big of a buffer is available
-            uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
+        const uint32_t totalCubes = Chunk::WIDTH_X * Chunk::HEIGHT_Y * Chunk::DEPTH_Z;
 
-            if (drawnCubes != totalCubes) { continue; }
-            // save how many we couldn't draw due to buffer room so we can display it
-            auto missing = totalCubes - drawnCubes;
+        // figure out how big of a buffer is available
+        uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
+        std::cout << totalCubes << std::endl;
 
-            bgfx::InstanceDataBuffer idb;
-            bgfx::allocInstanceDataBuffer(&idb, drawnCubes, instanceStride);
+        // save how many we couldn't draw due to buffer room so we can display it
+        auto missing = totalCubes - drawnCubes;
 
-            uint8_t* data = idb.data;
+        bgfx::InstanceDataBuffer idb;
+        bgfx::allocInstanceDataBuffer(&idb, drawnCubes, instanceStride);
 
-            for (uint32_t w = 0; w < width; ++w) {
-                for (uint32_t l = 0; l < length; ++l) {
-                    for (uint32_t h = 0; h < height; ++h) {
-                        glm::mat4* mtx = (glm::mat4*)data;
-                        *mtx = glm::translate(glm::mat4{1.0f}, glm::vec3{
-                            i * width * 2.0f + w * 2.0f,
-                            -15.0f + h * 2.0f,
-                            -15.0f + l * 2.0f
-                        });
+        uint8_t* data = idb.data;
 
-                        data += instanceStride;
-                    }
+        glm::vec3 blockPos;
+        for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
+            for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {
+                for (uint32_t d = 0; d < Chunk::DEPTH_Z; ++d) {
+                    auto bIdx = glm::vec3{w, h, d};
+                    m_chunk.positionOf(&blockPos, bIdx);
+
+                    glm::mat4* mtx = (glm::mat4*)data;
+
+                    *mtx = glm::translate(glm::mat4{1.0f}, blockPos);
+
+                    float* color = (float*)&data[64];
+                    color[0] = (m_chunk[bIdx] == 0) ? 1.0f: 0.0f;
+                    color[1] = 0.0f;
+                    color[2] = 0.0f;
+                    color[3] = 1.0f;
+
+                    data += instanceStride;
                 }
             }
-
-            // Set vertex and index buffer.
-            bgfx::setVertexBuffer(0, m_vbh);
-            bgfx::setIndexBuffer(m_ibh);
-
-            // Set instance data buffer.
-            bgfx::setInstanceDataBuffer(&idb);
-
-            // Set render states.
-            bgfx::setState(BGFX_STATE_DEFAULT);
-
-            // Submit primitive for rendering to view 0.
-            bgfx::submit(0, m_program);
         }
+
+        // Set vertex and index buffer.
+        bgfx::setVertexBuffer(0, m_vbh);
+        bgfx::setIndexBuffer(m_ibh);
+
+        // Set instance data buffer.
+        bgfx::setInstanceDataBuffer(&idb);
+
+        // Set render states.
+        bgfx::setState(BGFX_STATE_DEFAULT);
+
+        // Submit primitive for rendering to view 0.
+        bgfx::submit(0, m_program);
     }
 
 } // rend

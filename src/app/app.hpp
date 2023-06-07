@@ -1,8 +1,11 @@
 #ifndef APP_HPP
 #define APP_HPP
 
+#include <memory>
+
 #include "window/window.hpp"
 #include "render/renderer/cube_renderer.hpp"
+#include "controllers/camera/flying_camera_controller.hpp"
 
 class App {
 public:

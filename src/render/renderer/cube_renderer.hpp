@@ -9,6 +9,8 @@
 
 #include <bgfx/bgfx.h>
 
+#include "render/chunk/chunk.hpp"
+
 namespace rend {
     class CubeRenderer {
     public:
@@ -33,6 +35,7 @@ namespace rend {
         bgfx::VertexBufferHandle m_vbh;
         bgfx::IndexBufferHandle  m_ibh;
         bgfx::ProgramHandle m_program;
+        Chunk m_chunk{glm::vec3{16.0f, 0.0f, 0.0f}};
     };
 } // rend
 
