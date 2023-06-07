@@ -44,6 +44,7 @@ namespace rend {
     };
 
 
+    //! Just a test method for initing a test chunk
     inline void initTestChunk(Chunk* chunkPtr) {
         for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
             for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {

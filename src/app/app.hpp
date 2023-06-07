@@ -5,6 +5,7 @@
 
 #include "window/window.hpp"
 #include "render/renderer/cube_renderer.hpp"
+#include "render/chunk/chunk_renderer.hpp"
 #include "controllers/camera/flying_camera_controller.hpp"
 
 class App {
@@ -22,6 +23,7 @@ private:
 
     WindowWrapper m_window;
     rend::CubeRenderer m_renderer;
+    rend::ChunkRenderer m_chunkRenderer;
     std::unique_ptr<control::FlyingCameraController> m_cameraController;
 };
 

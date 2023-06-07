@@ -20,7 +20,7 @@ namespace rend {
                     {glm::vec3{ 1.0f, -1.0f,  1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{-1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
                     {glm::vec3{ 1.0f,  1.0f, -1.0f}, glm::vec3{1.0f, 0.0f, 0.0f} },
-                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 12.0f} },
+                    {glm::vec3{-1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
                     {glm::vec3{ 1.0f, -1.0f, -1.0f}, glm::vec3{0.0f, 0.0f, 1.0f} },
             };
 
@@ -80,7 +80,6 @@ namespace rend {
 
         // figure out how big of a buffer is available
         uint32_t drawnCubes = bgfx::getAvailInstanceDataBuffer(totalCubes, instanceStride);
-        std::cout << totalCubes << std::endl;
 
         // save how many we couldn't draw due to buffer room so we can display it
         auto missing = totalCubes - drawnCubes;
