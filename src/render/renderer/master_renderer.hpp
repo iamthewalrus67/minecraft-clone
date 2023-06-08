@@ -11,12 +11,17 @@
 namespace rend {
     class MasterRenderer{
     public:
+        //! Initialize all the basic data
         void init();
 
+        //! Call render for each chunk
         void render();
 
         //! Free all the bgfx resources and call free on internal objects
         void terminate();
+
+        //! Get the chunkmanager for further work
+        [[nodiscard]] ChunkManager& getChunkManagerRef() { return m_chunkManager; }
     private:
         ChunkManager m_chunkManager;
         Texture m_blockTexture;

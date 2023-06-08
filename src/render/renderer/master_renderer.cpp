@@ -10,9 +10,6 @@ namespace rend {
     void MasterRenderer::init() {
         m_blockTexture = ul::loadTexture("res/blocks.png");
         m_blockTexSampler = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
-
-        m_chunkManager.addChunk(glm::vec3{0.0f, 0.0f, 0.0f});
-        m_chunkManager.addChunk(glm::vec3{32.0f, 0.0f, 0.0f});
     }
 
     void MasterRenderer::render() {

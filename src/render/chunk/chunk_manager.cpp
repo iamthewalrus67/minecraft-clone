@@ -14,8 +14,11 @@ namespace rend {
     }
 
     bool ChunkManager::removeChunk(const glm::ivec3 &chunkPos) {
-        m_chunkData[chunkPos].terminate();
-        std::cout << m_chunkData.erase(chunkPos) << std::endl;
+        auto it = m_chunkData.find(chunkPos);
+        if (it == m_chunkData.end()) { return false; }
+        m_chunkData.erase(it);
+        (*it).second.terminate();
+        return true;
     }
 
     void ChunkManager::terminate() {

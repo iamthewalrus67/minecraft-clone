@@ -86,7 +86,6 @@ namespace rend {
         m_programTemp = bgfx::createProgram(vsh, fsh, true);
 
         m_chunk.init(chunkPos);
-        initTestChunk(&m_chunk);
     }
 
     void ChunkRenderer::render() {
