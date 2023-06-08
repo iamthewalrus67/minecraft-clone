@@ -8,19 +8,25 @@
 
 namespace rend {
     void MasterRenderer::init() {
-        m_chunkRendererTemp.init(glm::vec3{-16.0f, 0.0f, 32.0f});
         m_blockTexture = ul::loadTexture("res/blocks.png");
         m_blockTexSampler = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
+
+        m_chunkManager.addChunk(glm::vec3{0.0f, 0.0f, 0.0f});
+        m_chunkManager.addChunk(glm::vec3{32.0f, 0.0f, 0.0f});
     }
 
     void MasterRenderer::render() {
         bgfx::setTexture(0, m_blockTexSampler, m_blockTexture.handle);
-        m_chunkRendererTemp.render();
+
+        auto& chunkRenderers = m_chunkManager.getChunkRenderers();
+        for (auto& renderer: chunkRenderers) {
+            renderer.second.render();
+        }
     }
 
     void MasterRenderer::terminate() {
         bgfx::destroy(m_blockTexSampler);
         bgfx::destroy(m_blockTexture.handle);
-        m_chunkRendererTemp.terminate();
+        m_chunkManager.terminate();
     }
 } // rend

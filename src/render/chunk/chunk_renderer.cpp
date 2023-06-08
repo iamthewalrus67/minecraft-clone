@@ -37,14 +37,14 @@ namespace rend {
     };
 
     static const glm::vec3 CHUNK_VERTICES[] = {
-            glm::vec3(-1, -1, -1),
-            glm::vec3(-1, 1, -1),
-            glm::vec3(1, 1, -1),
-            glm::vec3(1, -1, -1),
-            glm::vec3(-1, -1, 1),
-            glm::vec3(-1, 1, 1),
+            glm::vec3(0, 0, 0),
+            glm::vec3(0, 1, 0),
+            glm::vec3(1, 1, 0),
+            glm::vec3(1, 0, 0),
+            glm::vec3(0, 0, 1),
+            glm::vec3(0, 1, 1),
             glm::vec3(1, 1, 1),
-            glm::vec3(1, -1, 1)
+            glm::vec3(1, 0, 1)
     };
 
     static const glm::vec3 CHUNK_NORMALS[] = {
