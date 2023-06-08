@@ -10,7 +10,7 @@ namespace rend {
     void Chunk::init(const glm::vec3 &pos) {
         m_positionBL = pos;
         m_initialized = true;
-        m_toBeMeshed = true;
+        m_toBeMeshed = false;
     }
 
     void Chunk::setBlock(const glm::ivec3 &pos, rend::Chunk::BlockID blockId) {

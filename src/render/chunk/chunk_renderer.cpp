@@ -67,7 +67,7 @@ namespace rend {
         m_programTemp = bgfx::createProgram(vsh, fsh, true);
 
         m_chunk.init(chunkPos);
-        initTestChunk(&m_chunk);
+        //initTestChunk(&m_chunk);
     }
 
     void ChunkRenderer::render() {
@@ -76,6 +76,9 @@ namespace rend {
         if (m_chunk.waitForReMesh()) {
             // Mesh the chunk
             meshChunk();
+            m_chunk.logReMesh();
+            if (m_vertices.size() == 0 || m_indices.size() == 0) { return; }
+
             // Update the dynamic vertex buffer if chunk changed
             bgfx::update(m_dynamicVBH, 0,
                          bgfx::copy(
@@ -86,7 +89,6 @@ namespace rend {
                          bgfx::copy(
                                  &m_indices[0],
                                  m_indices.size() * sizeof(m_indices[0])));
-            m_chunk.logReMesh();
         }
 
         // Set vertex and index buffer.

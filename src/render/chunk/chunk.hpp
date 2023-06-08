@@ -51,7 +51,7 @@ namespace rend {
         //! Tell the chunk that ts was remeshed
         void logReMesh() { m_toBeMeshed = false; }
     private:
-        std::array<BlockID, WIDTH_X * HEIGHT_Y * DEPTH_Z> m_data;
+        std::array<BlockID, WIDTH_X * HEIGHT_Y * DEPTH_Z> m_data{};
         glm::vec3 m_positionBL;
         bool m_initialized;
         bool m_toBeMeshed;

@@ -34,6 +34,9 @@ namespace rend {
         //! Build the mesh if needed(was changed) and render the chunk mesh
         void render();
 
+        //! Get the chunk reference
+        [[nodiscard]] Chunk& getChunkRef() { return m_chunk; }
+
         std::vector<ChunkVertex> m_vertices;
         std::vector<uint32_t> m_indices;
 
@@ -43,6 +46,7 @@ namespace rend {
     private:
         //! Mesh the chunk if it was changed to render it properly
         void meshChunk();
+
         Chunk m_chunk;
     };
 } // rend
