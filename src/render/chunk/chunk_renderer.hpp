@@ -28,8 +28,8 @@ namespace rend {
             static bgfx::VertexLayout layout;
         };
 
-        //! Initialize the renderer
-        void init();
+        //! Initialize the renderer and the chunk
+        void init(const glm::vec3& chunkPos);
 
         //! Build the mesh if needed(was changed) and render the chunk mesh
         void render();
@@ -41,9 +41,9 @@ namespace rend {
         bgfx::DynamicIndexBufferHandle  m_dynamicIBH;
         bgfx::ProgramHandle m_programTemp;
     private:
-        Chunk m_chunk{glm::vec3{16.0f, 0.0f, -32.0f}};
-
-        bool m_initedTemp = false;
+        //! Mesh the chunk if it was changed to render it properly
+        void meshChunk();
+        Chunk m_chunk;
     };
 } // rend
 

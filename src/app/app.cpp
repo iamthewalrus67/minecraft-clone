@@ -68,7 +68,7 @@ void App::init() {
 
 void App::initRenderIternal() {
     m_renderer.init();
-    m_chunkRenderer.init();
+    m_chunkRenderer.init(glm::vec3{16.0f, 0.0f, -32.0f});
 
     int width, height;
     m_window.getSize(&width, &height);

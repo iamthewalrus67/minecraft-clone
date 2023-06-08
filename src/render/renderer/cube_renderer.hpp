@@ -36,7 +36,7 @@ namespace rend {
         bgfx::VertexBufferHandle m_vbh;
         bgfx::IndexBufferHandle  m_ibh;
         bgfx::ProgramHandle m_program;
-        Chunk m_chunk{glm::vec3{16.0f, 0.0f, 0.0f}};
+        Chunk m_chunk{};
     };
 } // rend
 
