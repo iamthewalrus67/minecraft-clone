@@ -18,9 +18,9 @@ namespace rend {
         m_toBeMeshed = true;
     }
 
-    const Chunk::BlockID &Chunk::operator[](const glm::ivec3 &pos) const {
+    BLOCKS Chunk::operator[](const glm::ivec3 &pos) const {
         // Yes, I too have no fucking clue how to math here
-        return m_data[pos.x + pos.y * WIDTH_X + pos.z * WIDTH_X * HEIGHT_Y];
+        return static_cast<BLOCKS>(m_data[pos.x + pos.y * WIDTH_X + pos.z * WIDTH_X * HEIGHT_Y]);
     }
 
     void Chunk::positionOf(glm::vec3 *posToFill, const glm::ivec3 &posInChunk) {

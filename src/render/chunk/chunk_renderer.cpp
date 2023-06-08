@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "chunk_renderer.hpp"
 
 #include "render/util/direction.hpp"
@@ -132,6 +134,7 @@ namespace rend {
                     auto bIdx = glm::vec3{w, h, d};
                     m_chunk.positionOf(&blockPos, bIdx);
 
+                    BLOCKS blockID = m_chunk[bIdx];
                     // Iterate over all 6 directions
                     for (size_t i = 0; i < 6; ++i) {
                         util::Direction dir{static_cast<util::Direction::INDEX>(i)};
@@ -139,14 +142,13 @@ namespace rend {
 
                         // If neighbor is air and we are not air: emit a face
                         if (m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) && !m_chunk.isBlockAir(bIdx)) {
-
-                            const float uv_unit = 1.0f / 16.0f;
+                            glm::vec2 textureOffset = getTextureOffset(blockID, dir);
                             // emit vertices
                             for (size_t i = 0; i < 4; i++) {
                                 ChunkRenderer::ChunkVertex vertex;
                                 vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
-                                vertex.uv = (CHUNK_UVS[i] * uv_unit) + glm::vec2(0, 16 - 1) * uv_unit ;
+                                vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
                                 m_vertices.push_back(vertex);
                             }
 
@@ -159,5 +161,12 @@ namespace rend {
                 }
             }
         }
+    }
+
+    void ChunkRenderer::terminate() {
+        // Cleanup.
+        bgfx::destroy(m_dynamicVBH);
+        bgfx::destroy(m_dynamicIBH);
+        bgfx::destroy(m_programTemp);
     }
 } // rend

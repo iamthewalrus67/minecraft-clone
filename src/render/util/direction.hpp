@@ -35,6 +35,8 @@ namespace util {
             return DIRECTION_TO_VEC3[idx];
         }
 
+        bool operator==(INDEX i) { return idx == i; }
+
         INDEX idx;
     };
 } // util

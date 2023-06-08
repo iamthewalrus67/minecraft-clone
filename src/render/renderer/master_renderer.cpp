@@ -17,4 +17,10 @@ namespace rend {
         bgfx::setTexture(0, m_blockTexSampler, m_blockTexture.handle);
         m_chunkRendererTemp.render();
     }
+
+    void MasterRenderer::terminate() {
+        bgfx::destroy(m_blockTexSampler);
+        bgfx::destroy(m_blockTexture.handle);
+        m_chunkRendererTemp.terminate();
+    }
 } // rend

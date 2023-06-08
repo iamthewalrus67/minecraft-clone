@@ -148,6 +148,7 @@ void App::start() {
 }
 
 void App::terminate() {
+    m_renderer.terminate();
     bgfx::shutdown();
     m_window.terminate();
 }

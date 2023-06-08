@@ -38,7 +38,7 @@ namespace rend {
         void init(const glm::vec3& pos);
 
         //! Get the BlockID ref at the positiov provided by the ivec
-        [[nodiscard]] const BlockID &operator[](const glm::ivec3 &pos) const;
+        [[nodiscard]] BLOCKS operator[](const glm::ivec3 &pos) const;
         //! Set the block at the blockID(so the chunk can log that is was changed)
         void setBlock(const glm::ivec3 &pos, BlockID blockId);
         //! Get the actual position of a singular block based on chunk position
@@ -62,7 +62,7 @@ namespace rend {
         for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
             for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {
                 for (uint32_t d = 0; d < Chunk::DEPTH_Z; ++d) {
-                    (*chunkPtr).setBlock(glm::vec3{w, h, d}, (h < Chunk::HEIGHT_Y / 2) ? (BLOCKS::GRASS): (BLOCKS::AIR));
+                    (*chunkPtr).setBlock(glm::vec3{w, h, d}, (w + h + d) % 3 + 1);
                 }
             }
         }

@@ -14,6 +14,9 @@ namespace rend {
         void init();
 
         void render();
+
+        //! Free all the bgfx resources and call free on internal objects
+        void terminate();
     private:
         ChunkRenderer m_chunkRendererTemp;
 
