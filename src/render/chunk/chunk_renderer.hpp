@@ -15,10 +15,9 @@ namespace rend {
     class ChunkRenderer {
     public:
         struct ChunkVertex {
-            ChunkVertex(const glm::vec3& p, const glm::vec3& c): pos{p}, color{c} {}
-
             glm::vec3 pos;
-            glm::vec3 color;
+            glm::vec3 normal;
+            glm::vec2 uv;
 
             ChunkVertex() = default;
 

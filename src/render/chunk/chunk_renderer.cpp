@@ -11,7 +11,8 @@ namespace rend {
         layout
                 .begin()
                 .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-                .add(bgfx::Attrib::Color0,   3, bgfx::AttribType::Float, true)
+                .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float, true)
+                .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
                 .end();
     }
 
@@ -138,11 +139,14 @@ namespace rend {
 
                         // If neighbor is air and we are not air: emit a face
                         if (m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) && !m_chunk.isBlockAir(bIdx)) {
+
+                            const float uv_unit = 1.0f / 16.0f;
                             // emit vertices
                             for (size_t i = 0; i < 4; i++) {
                                 ChunkRenderer::ChunkVertex vertex;
                                 vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
-                                vertex.color = glm::vec3{1.0f, 0.0f, 0.0f};
+                                vertex.normal = CHUNK_NORMALS[dir.idx];
+                                vertex.uv = (CHUNK_UVS[i] * uv_unit) + glm::vec2(0, 16 - 1) * uv_unit ;
                                 m_vertices.push_back(vertex);
                             }
 

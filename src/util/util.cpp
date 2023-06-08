@@ -35,6 +35,8 @@ namespace ul {
             textureRes.handle = res;
         }
 
+        std::cout << textureRes.size.x << textureRes.size.y << std::endl;
+
         return textureRes;
     }
 } // ul
