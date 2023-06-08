@@ -68,7 +68,6 @@ void App::init() {
 
 void App::initRenderIternal() {
     m_renderer.init();
-    m_chunkRenderer.init(glm::vec3{16.0f, 0.0f, -32.0f});
 
     int width, height;
     m_window.getSize(&width, &height);
@@ -138,8 +137,7 @@ void App::start() {
 
         bgfx::touch(0);
 
-        //m_renderer.render();
-        m_chunkRenderer.render();
+        m_renderer.render();
 
         // Advance to next frame. Process submitted rendering primitives.
         bgfx::frame();

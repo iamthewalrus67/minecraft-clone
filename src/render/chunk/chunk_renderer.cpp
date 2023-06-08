@@ -44,6 +44,22 @@ namespace rend {
             glm::vec3(1, -1, 1)
     };
 
+    static const glm::vec3 CHUNK_NORMALS[] = {
+            glm::vec3( 0,  0,  1),
+            glm::vec3( 0,  0, -1),
+            glm::vec3( 1,  0,  0),
+            glm::vec3(-1,  0,  0),
+            glm::vec3( 0,  1,  0),
+            glm::vec3( 0, -1,  0),
+    };
+
+    static const glm::vec2 CHUNK_UVS[] = {
+            glm::vec2(0, 0),
+            glm::vec2(1, 0),
+            glm::vec2(1, 1),
+            glm::vec2(0, 1),
+    };
+
     void ChunkRenderer::init(const glm::vec3& chunkPos) {
         ChunkVertex::init();
 
@@ -67,7 +83,7 @@ namespace rend {
         m_programTemp = bgfx::createProgram(vsh, fsh, true);
 
         m_chunk.init(chunkPos);
-        //initTestChunk(&m_chunk);
+        initTestChunk(&m_chunk);
     }
 
     void ChunkRenderer::render() {
