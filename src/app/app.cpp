@@ -27,6 +27,8 @@
 #include "controllers/camera/flying_camera_controller.hpp"
 #include "app/app.hpp"
 
+#include "math/ray.hpp"
+#include "render/chunk/chunk.hpp"
 
 bool s_showStats = false;
 
@@ -137,6 +139,26 @@ void App::start() {
                 std::cout << cOpt->getChunkGlobalPos().x << cOpt->getChunkGlobalPos().y << cOpt->getChunkGlobalPos().z << std::endl;
                 std::cout << b.localChunkPos.x << " " << b.localChunkPos.y << " " << b.localChunkPos.z << std::endl;
                 std::cout << b.blockID << std::endl;
+            }
+        }
+
+        // Block destruction
+        if (mouse.isLeftButtonJustPressed()) {
+            auto& chunkManager = m_renderer.getChunkManagerRef();
+            auto intersection = math::Ray{m_cameraController->getPosition(), m_cameraController->getDirection()}.intersectBlock([&chunkManager](auto p) {
+                auto chunk = chunkManager.getChunkRefFromGlobalPos(p);
+                if (!chunk) {
+                    return false;
+                }
+                auto blockId = chunk->getBlockDataFromGlobalPos(p).blockID;
+                return blockId != rend::BLOCKS::AIR;
+            }, 4.0f);
+            if (intersection) {
+                auto chunk = chunkManager.getChunkRefFromGlobalPos(intersection->position);
+                if (chunk) {
+                    auto block = chunk->getBlockDataFromGlobalPos(intersection->position);
+                    chunk->setBlock(block.localChunkPos, rend::BLOCKS::AIR);
+                }
             }
         }
 

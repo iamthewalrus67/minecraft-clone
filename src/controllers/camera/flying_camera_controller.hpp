@@ -44,6 +44,7 @@ public:
     void updateScreenSize(float screenWidth, float screenHeight);
 
     glm::vec3 getPosition();
+    glm::vec3 getDirection();
 
     rend::Camera &getCamera() { return m_camera; }
 
