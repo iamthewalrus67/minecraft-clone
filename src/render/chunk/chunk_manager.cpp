@@ -21,6 +21,29 @@ namespace rend {
         return true;
     }
 
+    void ChunkManager::reMeshChunks() {
+        for (auto& chunkRenderer: m_chunkData) {
+            auto& chunk = chunkRenderer.second.getChunkRef();
+            if (chunk.waitForReMesh()) {
+                chunkRenderer.second.meshChunk();
+            }
+        }
+    }
+
+    Chunk *ChunkManager::getChunkRefFromGlobalPos(const glm::vec3 &pos) {
+        glm::ivec3 aliquotPos = glm::ivec3{
+                static_cast<int>(pos.x) - static_cast<int>(pos.x) % Chunk::WIDTH_X,
+                static_cast<int>(pos.y) - static_cast<int>(pos.y) % Chunk::HEIGHT_Y,
+                static_cast<int>(pos.z) - static_cast<int>(pos.z) % Chunk::DEPTH_Z,
+        };
+
+        try {
+            return &(m_chunkData.at(aliquotPos).getChunkRef());
+        } catch (...) {
+            return nullptr;
+        }
+    }
+
     void ChunkManager::terminate() {
         for (auto& cR: m_chunkData) {
             cR.second.terminate();

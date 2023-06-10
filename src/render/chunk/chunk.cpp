@@ -37,4 +37,15 @@ namespace rend {
 
         return operator[](posInChunk) == BLOCKS::AIR;
     }
+
+    Chunk::Block Chunk::getBlockDataFromGlobalPos(const glm::vec3 &globalPos) {
+        Block out;
+
+        glm::ivec3 localBlockPos = glm::floor((globalPos - m_positionBL) / BLOCK_SIZE);
+
+        out.localChunkPos = localBlockPos;
+        out.blockID = operator[](localBlockPos);
+
+        return out;
+    }
 } // rend

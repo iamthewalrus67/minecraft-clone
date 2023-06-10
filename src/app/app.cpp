@@ -128,7 +128,13 @@ void App::start() {
         // TODO: REMOVE
         if (keyboard.isJustPressed(GLFW_KEY_F)) {
             auto& a = m_renderer.getChunkManagerRef();
-            a.removeChunk(glm::vec3{32, 0, 0});
+            auto cOpt = a.getChunkRefFromGlobalPos(glm::vec3{33, 32, 100});
+            if (cOpt) {
+                auto b = cOpt->getBlockDataFromGlobalPos(glm::vec3{33, 31, 100});
+                std::cout << cOpt->getChunkGlobalPos().x << cOpt->getChunkGlobalPos().y << cOpt->getChunkGlobalPos().z << std::endl;
+                std::cout << b.localChunkPos.x << " " << b.localChunkPos.y << " " << b.localChunkPos.z << std::endl;
+                std::cout << b.blockID << std::endl;
+            }
         }
 
         // This dummy draw call is here to make sure that view 0 is cleared

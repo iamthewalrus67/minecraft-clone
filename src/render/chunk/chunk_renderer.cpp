@@ -91,24 +91,6 @@ namespace rend {
     void ChunkRenderer::render() {
         if (!m_chunk.isInitialized()) { return; }
 
-        if (m_chunk.waitForReMesh()) {
-            // Mesh the chunk
-            meshChunk();
-            m_chunk.logReMesh();
-            if (m_vertices.size() == 0 || m_indices.size() == 0) { return; }
-
-            // Update the dynamic vertex buffer if chunk changed
-            bgfx::update(m_dynamicVBH, 0,
-                         bgfx::copy(
-                                 &m_vertices[0],
-                                 m_vertices.size() * sizeof(m_vertices[0])));
-            // Update the dynamic index buffer if chunk changed
-            bgfx::update(m_dynamicIBH, 0,
-                         bgfx::copy(
-                                 &m_indices[0],
-                                 m_indices.size() * sizeof(m_indices[0])));
-        }
-
         // Set vertex and index buffer.
         bgfx::setVertexBuffer(0, m_dynamicVBH);
         bgfx::setIndexBuffer(m_dynamicIBH);
@@ -160,6 +142,21 @@ namespace rend {
                 }
             }
         }
+
+        // Do needed operations after chunk remesh
+        m_chunk.logReMesh();
+        if (m_vertices.size() == 0 || m_indices.size() == 0) { return; }
+
+        // Update the dynamic vertex buffer if chunk changed
+        bgfx::update(m_dynamicVBH, 0,
+                     bgfx::copy(
+                             &m_vertices[0],
+                             m_vertices.size() * sizeof(m_vertices[0])));
+        // Update the dynamic index buffer if chunk changed
+        bgfx::update(m_dynamicIBH, 0,
+                     bgfx::copy(
+                             &m_indices[0],
+                             m_indices.size() * sizeof(m_indices[0])));
     }
 
     void ChunkRenderer::terminate() {
