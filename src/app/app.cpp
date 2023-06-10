@@ -69,6 +69,16 @@ void App::init() {
 void App::initRenderIternal() {
     m_renderer.init();
 
+    // EXAMPLE: This is how you would add/erase a chunk from the buffer
+    // TODO: REMOVE
+    auto &c = m_renderer.getChunkManagerRef();
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            auto& chunk = c.addChunk(glm::vec3{i * rend::Chunk::WIDTH_X, 0.0f, j * rend::Chunk::DEPTH_Z});
+            initTestChunk(&chunk);
+        }
+    }
+
     int width, height;
     m_window.getSize(&width, &height);
     m_cameraController.reset(
@@ -111,6 +121,13 @@ void App::start() {
             m_window.setCaptureCursor(false);
         }
 
+        // EXAMPLE: THIS IS HOW YOU WOULD USE THE REMOVAL!
+        // TODO: REMOVE
+        if (keyboard.isJustPressed(GLFW_KEY_F)) {
+            auto& a = m_renderer.getChunkManagerRef();
+            a.removeChunk(glm::vec3{32, 0, 0});
+        }
+
         // This dummy draw call is here to make sure that view 0 is cleared
         // if no other draw calls are submitted to view 0.
         bgfx::touch(kClearView);
@@ -148,6 +165,7 @@ void App::start() {
 }
 
 void App::terminate() {
+    m_renderer.terminate();
     bgfx::shutdown();
     m_window.terminate();
 }

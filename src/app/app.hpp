@@ -1,8 +1,11 @@
 #ifndef APP_HPP
 #define APP_HPP
 
+#include <memory>
+
 #include "window/window.hpp"
-#include "render/renderer/cube_renderer.hpp"
+#include "render/renderer/master_renderer.hpp"
+#include "controllers/camera/flying_camera_controller.hpp"
 
 class App {
 public:
@@ -18,7 +21,7 @@ private:
     void initRenderIternal();
 
     WindowWrapper m_window;
-    rend::CubeRenderer m_renderer;
+    rend::MasterRenderer m_renderer;
     std::unique_ptr<control::FlyingCameraController> m_cameraController;
 };
 
