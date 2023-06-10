@@ -45,7 +45,7 @@ public:
 
     glm::vec3 getPosition();
 
-    const rend::Camera &getCamera() { return m_camera; }
+    rend::Camera &getCamera() { return m_camera; }
 
 private:
     rend::Camera m_camera;
