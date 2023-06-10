@@ -6,6 +6,7 @@
 #include "window/window.hpp"
 #include "render/renderer/master_renderer.hpp"
 #include "controllers/camera/flying_camera_controller.hpp"
+#include "world_manager/world_manager.hpp"
 
 class App {
 public:

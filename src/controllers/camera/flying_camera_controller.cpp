@@ -47,6 +47,11 @@ void FlyingCameraController::handleRotation() {
     if (glm::length(rotation) > 0) {
         m_camera.addRotation(rotation);
     }
+
+}
+
+glm::vec3 FlyingCameraController::getPosition(){
+    return m_camera.getPosition();
 }
 
 } // namespace control
