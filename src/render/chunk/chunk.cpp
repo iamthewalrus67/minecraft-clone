@@ -30,12 +30,16 @@ namespace rend {
     }
 
     bool Chunk::isBlockAir(const glm::ivec3 &posInChunk) const {
+        if (isOutOfBounds(posInChunk)) { return true; }
+        return operator[](posInChunk) == BLOCKS::AIR;
+    }
+
+    bool Chunk::isOutOfBounds(const glm::ivec3 &posInChunk) const {
         if (posInChunk.x < 0 || posInChunk.y < 0 || posInChunk.z < 0 ||
             posInChunk.x >= Chunk::WIDTH_X || posInChunk.y >= Chunk::HEIGHT_Y || posInChunk.z >= Chunk::DEPTH_Z) {
             return true;
         }
-
-        return operator[](posInChunk) == BLOCKS::AIR;
+        return false;
     }
 
     Chunk::Block Chunk::getBlockDataFromGlobalPos(const glm::vec3 &globalPos) {

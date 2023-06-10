@@ -23,6 +23,7 @@ public:
     [[nodiscard]] glm::vec3 &getPosition() { return m_position; };
     [[nodiscard]] glm::vec3 &getFrontDirection() { return m_frontDir; };
 
+
 private:
     //! Update view matrix, called at every camera state change
     void updateViewMatrix();

@@ -33,9 +33,9 @@ namespace rend {
             BLOCKS blockID;
         };
 
-        static constexpr uint32_t WIDTH_X = 32;
-        static constexpr uint32_t HEIGHT_Y = 64;
-        static constexpr uint32_t DEPTH_Z = 32;
+        static constexpr uint32_t WIDTH_X = 16;
+        static constexpr uint32_t HEIGHT_Y = 256;
+        static constexpr uint32_t DEPTH_Z = 16;
         static constexpr float BLOCK_SIZE = 1.0f;
 
         Chunk(): m_initialized{false}, m_toBeMeshed{false} {}
@@ -54,6 +54,7 @@ namespace rend {
         [[nodiscard]] Block getBlockDataFromGlobalPos(const glm::vec3& globalPos);
 
         [[nodiscard]] bool isBlockAir(const glm::ivec3& posInChunk) const;
+        [[nodiscard]] bool isOutOfBounds(const glm::ivec3& posInChunk) const;
         [[nodiscard]] bool isInitialized() const { return m_initialized; }
         //! Check if chunk was changed so we now whether it should be remeshed
         [[nodiscard]] bool waitForReMesh() const { return m_toBeMeshed; }

@@ -79,13 +79,7 @@ void App::initRenderIternal() {
 
     // EXAMPLE: This is how you would add/erase a chunk from the buffer
     // TODO: REMOVE
-    auto &c = m_renderer.getChunkManagerRef();
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            auto& chunk = c.addChunk(glm::vec3{i * rend::Chunk::WIDTH_X, 0.0f, j * rend::Chunk::DEPTH_Z});
-            initTestChunk(&chunk);
-        }
-    }
+
 
     int width, height;
     m_window.getSize(&width, &height);
@@ -111,6 +105,9 @@ void App::start() {
     int width = 1024, height = 768;
     m_window.getSize(&width, &height);
 
+    world::WorldManager wm = world::WorldManager();
+    wm.printNoisesSamples();
+
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
         // Handle window resize.
@@ -133,13 +130,9 @@ void App::start() {
         // TODO: REMOVE
         if (keyboard.isJustPressed(GLFW_KEY_F)) {
             auto& a = m_renderer.getChunkManagerRef();
-            auto cOpt = a.getChunkRefFromGlobalPos(glm::vec3{33, 32, 100});
-            if (cOpt) {
-                auto b = cOpt->getBlockDataFromGlobalPos(glm::vec3{33, 31, 100});
-                std::cout << cOpt->getChunkGlobalPos().x << cOpt->getChunkGlobalPos().y << cOpt->getChunkGlobalPos().z << std::endl;
-                std::cout << b.localChunkPos.x << " " << b.localChunkPos.y << " " << b.localChunkPos.z << std::endl;
-                std::cout << b.blockID << std::endl;
-            }
+            auto cOpt = a.getChunkRefFromGlobalPos(glm::vec3{-10, 0, -10});
+            std::cout << cOpt->getChunkGlobalPos().x << " " << cOpt->getChunkGlobalPos().y << " " << cOpt->getChunkGlobalPos().z << std::endl;
+            cOpt->setBlock(glm::vec3{15, 0, 0}, 0);
         }
 
         // Block destruction
@@ -187,6 +180,10 @@ void App::start() {
             glm::value_ptr(m_cameraController->getCamera().getProjectionMatrix()));
 
         bgfx::touch(0);
+
+
+        wm.deleteCreateChunks(m_renderer.getChunkManagerRef(), m_cameraController);
+
 
         m_renderer.render();
 
