@@ -62,6 +62,7 @@ namespace rend {
         [[nodiscard]] glm::vec3 getChunkGlobalPos() { return m_positionBL; }
         //! Tell the chunk that ts was remeshed
         void logReMesh() { m_toBeMeshed = false; }
+        void setToReMesh() { m_toBeMeshed = true; }
     private:
         std::array<BlockID, WIDTH_X * HEIGHT_Y * DEPTH_Z> m_data{};
         glm::vec3 m_positionBL;

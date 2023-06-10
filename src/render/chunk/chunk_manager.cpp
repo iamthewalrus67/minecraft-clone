@@ -11,6 +11,14 @@ namespace rend {
         auto& chunkRenderer = m_chunkData[chunkPos];
         chunkRenderer.init(chunkPos);
 
+        auto& chunk = chunkRenderer.getChunkRef();
+        std::array<Chunk*, 6> neighboorChunks;
+        fillNeighborChunksFromPos(&neighboorChunks, chunk.getChunkGlobalPos());
+
+        for (auto chunkPtr: neighboorChunks) {
+            if (chunkPtr) chunkPtr->setToReMesh();
+        }
+
         return chunkRenderer.getChunkRef();
     }
 
