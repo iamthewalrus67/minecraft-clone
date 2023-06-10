@@ -1,6 +1,6 @@
 UNAME_S = $(shell uname -s)
 
-CC = clang++
+CC = g++
 
 INCFLAGS  = -Isubmods/bgfx/include
 INCFLAGS += -Isubmods/bx/include
@@ -20,6 +20,8 @@ CCFLAGS += $(INCFLAGS)
 
 
 ifeq ($(UNAME_S), Darwin)
+	CC = clang++
+
 	CCFLAGS += -DDarvin=1
 	FRAMEWORKS	= -framework QuartzCore
     FRAMEWORKS += -framework Cocoa
