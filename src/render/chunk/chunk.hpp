@@ -34,7 +34,7 @@ namespace rend {
         };
 
         static constexpr uint32_t WIDTH_X = 16;
-        static constexpr uint32_t HEIGHT_Y = 64;
+        static constexpr uint32_t HEIGHT_Y = 256;
         static constexpr uint32_t DEPTH_Z = 16;
         static constexpr float BLOCK_SIZE = 1.0f;
 
