@@ -6,6 +6,7 @@
 #define COOL_GAME_CHUNK_RENDERER_HPP
 
 #include <vector>
+#include <array>
 
 #include <bgfx/bgfx.h>
 
@@ -35,7 +36,7 @@ namespace rend {
         void render();
 
         //! Mesh the chunk if it was changed to render it properly
-        void meshChunk();
+        void meshChunk(const std::array<Chunk*, 6> neighborChunks);
 
         //! Free resources
         void terminate();

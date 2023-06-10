@@ -20,6 +20,15 @@ namespace util {
         glm::vec3{0, -1, 0},
     };
 
+    static constexpr inline glm::vec3 DIRECTION_TO_IVEC3[] {
+        glm::ivec3{0, 0, 1},
+        glm::ivec3{0, 0, -1},
+        glm::ivec3{1, 0, 0},
+        glm::ivec3{-1, 0, 0},
+        glm::ivec3{0, 1, 0},
+        glm::ivec3{0, -1, 0},
+    };
+
     struct Direction {
         enum INDEX {
             FRONT  = 0,         // +z
@@ -33,6 +42,10 @@ namespace util {
         //! TODO: VERY SLOOOOOOOOOWWWW
         glm::vec3 toGlmVec3() {
             return DIRECTION_TO_VEC3[idx];
+        }
+
+        glm::ivec3 toGlmIVec3() {
+            return DIRECTION_TO_IVEC3[idx];
         }
 
         bool operator==(INDEX i) { return idx == i; }
