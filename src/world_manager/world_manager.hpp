@@ -31,7 +31,7 @@ namespace world{
         // test function to print noises samples
         void printNoisesSamples();
         void deleteCreateChunks(rend::ChunkManager &chunkManager,
-                                std::unique_ptr<control::FlyingCameraController>& camera);
+                                std::shared_ptr<control::FlyingCameraController> camera);
 
     private:
         siv::PerlinNoise::seed_type m_heightSeed;

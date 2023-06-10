@@ -12,7 +12,7 @@ FlyingCameraController::FlyingCameraController(float fovDeg,
     : m_camera{fovDeg, screenWH.first, screenWH.second, position} {}
 
 void FlyingCameraController::captureInputAndApply() {
-    handleMovement();
+//    handleMovement();
     handleRotation();
 }
 
@@ -21,18 +21,8 @@ void FlyingCameraController::updateScreenSize(float screenWidth,
     m_camera.updateScreenSize(screenWidth, screenHeight);
 }
 
-void FlyingCameraController::handleMovement() {
-    glm::vec3 offset = glm::vec3{0.0f, 0.0f, 0.0f};
-    for (auto &key : CameraSettings::MOVEMENT_BINDS) {
-        if (Keyboard::instance().isPressed(key)) {
-            offset += CameraSettings::MOVEMENT_BIND_MAP[key];
-        }
-    }
-
-    if (glm::length(offset) > 0) {
-        offset = glm::normalize(offset);
-        m_camera.addRelativeOffset(offset);
-    }
+void FlyingCameraController::moveCamera(const glm::vec3 &offset) {
+    m_camera.addRelativeOffset(offset);
 }
 
 void FlyingCameraController::handleRotation() {
