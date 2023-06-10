@@ -44,6 +44,14 @@ namespace rend {
         }
     }
 
+    Chunk *ChunkManager::getChunkRefFromAliquotPos(const glm::vec3 &pos) {
+        try {
+            return &(m_chunkData.at(pos).getChunkRef());
+        } catch (...) {
+            return nullptr;
+        }
+    }
+
     void ChunkManager::terminate() {
         for (auto& cR: m_chunkData) {
             cR.second.terminate();

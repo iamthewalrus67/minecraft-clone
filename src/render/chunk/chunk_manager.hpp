@@ -22,6 +22,8 @@ namespace rend {
 
         //! Get the chunk position from ARBITRARY GLOBAL POSITION
         [[nodiscard]] Chunk * getChunkRefFromGlobalPos(const glm::vec3& pos);
+        //! Get the chunk position from ARBITRARY GLOBAL POSITION
+        [[nodiscard]] Chunk * getChunkRefFromAliquotPos(const glm::vec3& pos);
         //! remove the chunk by position, if position is invalid, returns false
         bool removeChunk(const glm::ivec3& chunkPos);
 
