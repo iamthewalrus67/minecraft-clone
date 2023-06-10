@@ -43,7 +43,9 @@ public:
     //! size at resize
     void updateScreenSize(float screenWidth, float screenHeight);
 
-    rend::Camera &getCamera() { return m_camera; }
+    glm::vec3 getPosition();
+
+    const rend::Camera &getCamera() { return m_camera; }
 
 private:
     rend::Camera m_camera;
