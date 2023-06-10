@@ -30,7 +30,6 @@ namespace world{
 
         // test function to print noises samples
         void printNoisesSamples();
-
         void deleteCreateChunks(rend::ChunkManager &chunkManager,
                                 std::unique_ptr<control::FlyingCameraController>& camera);
 
@@ -42,7 +41,6 @@ namespace world{
         siv::PerlinNoise m_tempNoise;
 
         std::vector<glm::vec3> m_renderedChunksPositions{};
-
         glm::ivec3 m_chunkDimensions;
 
         double m_renderDistance;
