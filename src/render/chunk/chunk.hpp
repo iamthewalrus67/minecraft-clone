@@ -27,6 +27,12 @@ namespace rend {
     class Chunk {
         using BlockID = uint16_t;
     public:
+        //! A local to chunk block struct
+        struct Block {
+            glm::ivec3 localChunkPos;
+            BLOCKS blockID;
+        };
+
         static constexpr uint32_t WIDTH_X = 32;
         static constexpr uint32_t HEIGHT_Y = 64;
         static constexpr uint32_t DEPTH_Z = 32;
@@ -44,10 +50,15 @@ namespace rend {
         //! Get the actual position of a singular block based on chunk position
         void positionOf(glm::vec3* posToFill, const glm::ivec3& posInChunk);
 
+        //! Get the block at the specified globalPosition
+        [[nodiscard]] Block getBlockDataFromGlobalPos(const glm::vec3& globalPos);
+
         [[nodiscard]] bool isBlockAir(const glm::ivec3& posInChunk) const;
         [[nodiscard]] bool isInitialized() const { return m_initialized; }
         //! Check if chunk was changed so we now whether it should be remeshed
         [[nodiscard]] bool waitForReMesh() const { return m_toBeMeshed; }
+        //! Gets the position of the chunk
+        [[nodiscard]] glm::vec3 getChunkGlobalPos() { return m_positionBL; }
         //! Tell the chunk that ts was remeshed
         void logReMesh() { m_toBeMeshed = false; }
     private:

@@ -6,6 +6,7 @@
 #define COOL_GAME_CHUNK_MANAGER_HPP
 
 #include <unordered_map>
+#include <optional>
 
 #include "chunk_renderer.hpp"
 
@@ -18,6 +19,9 @@ namespace rend {
     public:
         //! Add chunk by position, to control this chunk, capture the reference into a variable
         [[nodiscard]] Chunk& addChunk(const glm::ivec3& chunkPos);
+
+        //! Get the chunk position from ARBITRARY GLOBAL POSITION
+        [[nodiscard]] Chunk * getChunkRefFromGlobalPos(const glm::vec3& pos);
         //! remove the chunk by position, if position is invalid, returns false
         bool removeChunk(const glm::ivec3& chunkPos);
 
