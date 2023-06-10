@@ -82,6 +82,7 @@ namespace rend {
             int dim = (i < 2) ? Chunk::DEPTH_Z: Chunk::WIDTH_X;
             util::Direction dir{static_cast<util::Direction::INDEX>(i)};
             (*neighbors)[i] = getChunkRefFromAliquotPos(globalChunkPos + dir.toGlmIVec3() * dim);
+            //if ((*neighbors)[i] == nullptr) {std::cout << "FFFFFFFUUUCK" << std::endl;}
         }
         (*neighbors)[4] = nullptr;
         (*neighbors)[5] = nullptr;
