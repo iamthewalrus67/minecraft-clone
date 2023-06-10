@@ -21,6 +21,9 @@ namespace rend {
         //! remove the chunk by position, if position is invalid, returns false
         bool removeChunk(const glm::ivec3& chunkPos);
 
+        //! Remesh chunks if needed
+        void reMeshChunks();
+
         //! Get all the chunk renderers, done so that the renderer can pull them
         [[nodiscard]] ChunkRendererMap& getChunkRenderers() { return m_chunkData; }
 

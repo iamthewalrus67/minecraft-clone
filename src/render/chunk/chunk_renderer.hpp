@@ -34,6 +34,9 @@ namespace rend {
         //! Build the mesh if needed(was changed) and render the chunk mesh
         void render();
 
+        //! Mesh the chunk if it was changed to render it properly
+        void meshChunk();
+
         //! Free resources
         void terminate();
 
@@ -44,9 +47,6 @@ namespace rend {
         static constexpr uint32_t ATLAS_TEXTURES_H = 16;
         static constexpr glm::vec2 TEXTURE_SIZE = glm::vec2{1.0f / static_cast<float>(ATLAS_TEXTURES_W),
                                                             1.0f / static_cast<float>(ATLAS_TEXTURES_H)};
-
-        //! Mesh the chunk if it was changed to render it properly
-        void meshChunk();
 
         Chunk m_chunk;
 

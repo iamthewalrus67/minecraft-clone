@@ -15,6 +15,8 @@ namespace rend {
     void MasterRenderer::render() {
         bgfx::setTexture(0, m_blockTexSampler, m_blockTexture.handle);
 
+        m_chunkManager.reMeshChunks();
+
         auto& chunkRenderers = m_chunkManager.getChunkRenderers();
         for (auto& renderer: chunkRenderers) {
             renderer.second.render();

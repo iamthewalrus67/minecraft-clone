@@ -62,7 +62,7 @@ namespace rend {
         for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
             for (uint32_t h = 0; h < Chunk::HEIGHT_Y; ++h) {
                 for (uint32_t d = 0; d < Chunk::DEPTH_Z; ++d) {
-                    (*chunkPtr).setBlock(glm::vec3{w, h, d}, (w + h + d) % 3 + 1);
+                    (*chunkPtr).setBlock(glm::vec3{w, h, d}, (h < Chunk::HEIGHT_Y / 2) ? (w + h + d) % 3 + 1: 0);
                 }
             }
         }

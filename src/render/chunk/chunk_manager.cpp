@@ -21,6 +21,15 @@ namespace rend {
         return true;
     }
 
+    void ChunkManager::reMeshChunks() {
+        for (auto& chunkRenderer: m_chunkData) {
+            auto& chunk = chunkRenderer.second.getChunkRef();
+            if (chunk.waitForReMesh()) {
+                chunkRenderer.second.meshChunk();
+            }
+        }
+    }
+
     void ChunkManager::terminate() {
         for (auto& cR: m_chunkData) {
             cR.second.terminate();
