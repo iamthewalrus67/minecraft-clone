@@ -4,10 +4,13 @@
 #include <iostream>
 #include <cmath>
 
+#include <glm/gtx/string_cast.hpp>
+
 #include "chunk_manager.hpp"
 
 namespace rend {
     Chunk &ChunkManager::addChunk(const glm::ivec3 &chunkPos) {
+        std::cout << glm::to_string(chunkPos) << std::endl;
         auto& chunkRenderer = m_chunkData[chunkPos];
         chunkRenderer.init(chunkPos);
 
@@ -26,6 +29,7 @@ namespace rend {
         auto it = m_chunkData.find(chunkPos);
         if (it == m_chunkData.end()) { return false; }
         m_chunkData.erase(it);
+
         (*it).second.terminate();
         return true;
     }

@@ -121,18 +121,18 @@ namespace rend {
                         util::Direction dir{static_cast<util::Direction::INDEX>(i)};
                         const size_t offset = m_vertices.size();
 
-                        if (m_chunk.isOutOfBounds(bIdx + dir.toGlmVec3())) {
-                            glm::ivec3 newChunkBIdx = bIdx + dir.toGlmVec3();
-                            newChunkBIdx.x = newChunkBIdx.x % Chunk::WIDTH_X;
-                            newChunkBIdx.y = newChunkBIdx.y % Chunk::HEIGHT_Y;
-                            newChunkBIdx.z = newChunkBIdx.z % Chunk::DEPTH_Z;
-                            if (neighborChunks[dir.idx] && !neighborChunks[dir.idx]->isBlockAir(newChunkBIdx)) {
-                                continue;
-                            }
-                        }
-
                         // If neighbor is air and we are not air: emit a face
                         if (m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) && !m_chunk.isBlockAir(bIdx)) {
+                            if (m_chunk.isOutOfBounds(bIdx + dir.toGlmVec3())) {
+                                glm::ivec3 newChunkBIdx = bIdx + dir.toGlmVec3();
+                                newChunkBIdx.x = newChunkBIdx.x % Chunk::WIDTH_X;
+                                newChunkBIdx.y = newChunkBIdx.y % Chunk::HEIGHT_Y;
+                                newChunkBIdx.z = newChunkBIdx.z % Chunk::DEPTH_Z;
+                                if (neighborChunks[dir.idx] && !neighborChunks[dir.idx]->isBlockAir(newChunkBIdx)) {
+                                    continue;
+                                }
+                            }
+
                             glm::vec2 textureOffset = getTextureOffset(blockID, dir);
                             // emit vertices
                             for (size_t i = 0; i < 4; i++) {
