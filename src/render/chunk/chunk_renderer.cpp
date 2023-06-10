@@ -123,10 +123,10 @@ namespace rend {
 
                         if (m_chunk.isOutOfBounds(bIdx + dir.toGlmVec3())) {
                             glm::ivec3 newChunkBIdx = bIdx + dir.toGlmVec3();
-                            newChunkBIdx.x -= newChunkBIdx.x % Chunk::WIDTH_X;
-                            newChunkBIdx.y -= newChunkBIdx.y % Chunk::HEIGHT_Y;
-                            newChunkBIdx.z -= newChunkBIdx.z % Chunk::DEPTH_Z;
-                            if (neighborChunks[dir.idx] && neighborChunks[dir.idx]->isBlockAir(newChunkBIdx)) {
+                            newChunkBIdx.x = newChunkBIdx.x % Chunk::WIDTH_X;
+                            newChunkBIdx.y = newChunkBIdx.y % Chunk::HEIGHT_Y;
+                            newChunkBIdx.z = newChunkBIdx.z % Chunk::DEPTH_Z;
+                            if (neighborChunks[dir.idx] && !neighborChunks[dir.idx]->isBlockAir(newChunkBIdx)) {
                                 continue;
                             }
                         }

@@ -77,10 +77,6 @@ void App::init() {
 void App::initRenderIternal() {
     m_renderer.init();
 
-    // EXAMPLE: This is how you would add/erase a chunk from the buffer
-    // TODO: REMOVE
-
-
     int width, height;
     m_window.getSize(&width, &height);
     m_cameraController.reset(
