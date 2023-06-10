@@ -13,6 +13,8 @@ namespace world{
     constexpr siv::PerlinNoise::seed_type DEF_SEED = 123456u;
     // in chunks
     constexpr double DEF_RENDDIST = 8;
+    // the bigger it is the smoother the noise is
+    constexpr double frequency = 100.;
 
     class WorldManager{
     public:

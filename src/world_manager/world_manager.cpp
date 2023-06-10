@@ -37,9 +37,16 @@ void world::WorldManager::createChunks(rend::ChunkManager &chunkManager, const g
 
 void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos){
     for (uint32_t x = 0; x < rend::Chunk::WIDTH_X; ++x) {
-        for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
-            for (uint32_t z = 0; z < rend::Chunk::DEPTH_Z; ++z) {
-                newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
+        for (uint32_t z = 0; z < rend::Chunk::DEPTH_Z; ++z) {
+            auto remapedCoords = glm::ivec3{chunkPos.x + x - m_chunkDimensions.x/2, 0, chunkPos.z + z - m_chunkDimensions.z};
+            auto height = static_cast<uint32_t>(m_heightNoise.noise2D_01(remapedCoords.x / world::frequency, remapedCoords.z / world::frequency) * m_chunkDimensions.y / 2 + m_chunkDimensions.y / 2);
+            for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
+                if(y <= height){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
+                }
+                else{
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
+                }
             }
         }
     }
