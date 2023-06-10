@@ -20,6 +20,7 @@ BGFX_TARGET = linux
 BGFX_DEPS_TARGET = linux64_gcc
 
 SRC = $(shell find src -name "*.cpp")
+INCL = $(shell find src -name "*.hpp")
 OBJ = $(SRC:%.cpp=$(OBJ_DIR)/%.o)
 OBJ_DIR = obj
 BIN = bin
@@ -81,7 +82,7 @@ run: build
 build: dirs shaders $(OBJ)
 	$(CC) -o $(BIN)/$(BIN_NAME) $(filter %.o,$^) $(LDFLAGS)
 
-$(OBJ): $(OBJ_DIR)/%.o: %.cpp
+$(OBJ): $(OBJ_DIR)/%.o: %.cpp $(INCL)
 	mkdir -p $(@D)
 	$(CC) -o $@ -c $< $(CCFLAGS)
 
