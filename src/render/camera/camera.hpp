@@ -20,6 +20,7 @@ public:
 
     [[nodiscard]] glm::mat4 &getProjectionMatrix() { return m_projection; };
     [[nodiscard]] glm::mat4 &getViewMatrix() { return m_view; };
+    [[nodiscard]] glm::vec3 &getPosition() { return m_position; };
 
 private:
     //! Update view matrix, called at every camera state change
