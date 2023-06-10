@@ -10,7 +10,6 @@
 
 namespace rend {
     Chunk &ChunkManager::addChunk(const glm::ivec3 &chunkPos) {
-        std::cout << glm::to_string(chunkPos) << std::endl;
         auto& chunkRenderer = m_chunkData[chunkPos];
         chunkRenderer.init(chunkPos);
 
@@ -29,6 +28,15 @@ namespace rend {
         auto it = m_chunkData.find(chunkPos);
         if (it == m_chunkData.end()) { return false; }
         m_chunkData.erase(it);
+
+        // TODO: MAYBE REMOVE
+        auto& chunk = it->second.getChunkRef();
+        std::array<Chunk*, 6> neighboorChunks;
+        fillNeighborChunksFromPos(&neighboorChunks, chunk.getChunkGlobalPos());
+
+        for (auto chunkPtr: neighboorChunks) {
+            if (chunkPtr) chunkPtr->setToReMesh();
+        }
 
         (*it).second.terminate();
         return true;
