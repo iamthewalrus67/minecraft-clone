@@ -56,8 +56,11 @@ void App::init() {
     init.resolution.width = (uint32_t)width;
     init.resolution.height = (uint32_t)height;
     init.resolution.reset = BGFX_RESET_VSYNC;
+#if Darvin
+    init.type = bgfx::RendererType::Metal;
+#else
     init.type = bgfx::RendererType::OpenGL;
-
+#endif
     if (!bgfx::init(init)) {
         std::cerr << "Failed to initialize bgfx" << std::endl;
         std::exit(1);
