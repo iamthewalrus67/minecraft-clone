@@ -46,6 +46,8 @@ public:
     glm::vec3 getPosition();
     glm::vec3 getDirection();
 
+    void moveCamera(const glm::vec3& offset);
+
     rend::Camera &getCamera() { return m_camera; }
 
 private:
@@ -53,7 +55,7 @@ private:
 
 private:
     //! Handle Camera movement
-    void handleMovement();
+//    void handleMovement();
     //! Handle Camera rotation
     void handleRotation();
 };

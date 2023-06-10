@@ -23,7 +23,7 @@ private:
 
     WindowWrapper m_window;
     rend::MasterRenderer m_renderer;
-    std::unique_ptr<control::FlyingCameraController> m_cameraController;
+    std::shared_ptr<control::FlyingCameraController> m_cameraController;
 };
 
 #endif // APP_HPP

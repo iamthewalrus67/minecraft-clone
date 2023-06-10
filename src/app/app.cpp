@@ -27,6 +27,8 @@
 #include "controllers/camera/flying_camera_controller.hpp"
 #include "app/app.hpp"
 
+#include "player/player.hpp"
+
 #include "math/ray.hpp"
 #include "render/chunk/chunk.hpp"
 
@@ -108,6 +110,8 @@ void App::start() {
     world::WorldManager wm = world::WorldManager();
     wm.printNoisesSamples();
 
+    player::Player player{m_cameraController, m_renderer.getChunkManagerRef()};
+
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
         // Handle window resize.
@@ -135,25 +139,7 @@ void App::start() {
             cOpt->setBlock(glm::vec3{15, 0, 0}, 0);
         }
 
-        // Block destruction
-        if (mouse.isLeftButtonJustPressed()) {
-            auto& chunkManager = m_renderer.getChunkManagerRef();
-            auto intersection = math::Ray{m_cameraController->getPosition(), m_cameraController->getDirection()}.intersectBlock([&chunkManager](auto p) {
-                auto chunk = chunkManager.getChunkRefFromGlobalPos(p);
-                if (!chunk) {
-                    return false;
-                }
-                auto blockId = chunk->getBlockDataFromGlobalPos(p).blockID;
-                return blockId != rend::BLOCKS::AIR;
-            }, 4.0f);
-            if (intersection) {
-                auto chunk = chunkManager.getChunkRefFromGlobalPos(intersection->position);
-                if (chunk) {
-                    auto block = chunk->getBlockDataFromGlobalPos(intersection->position);
-                    chunk->setBlock(block.localChunkPos, rend::BLOCKS::AIR);
-                }
-            }
-        }
+        player.update();
 
         // This dummy draw call is here to make sure that view 0 is cleared
         // if no other draw calls are submitted to view 0.

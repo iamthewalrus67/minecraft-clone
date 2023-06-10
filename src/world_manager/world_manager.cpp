@@ -12,7 +12,7 @@ world::WorldManager::WorldManager(siv::PerlinNoise::seed_type height_seed,
                                   m_renderDistance(rend_dist){}
 
 void world::WorldManager::deleteCreateChunks(rend::ChunkManager &chunkManager,
-                                             std::unique_ptr<control::FlyingCameraController>& camera) {
+                                             std::shared_ptr<control::FlyingCameraController> camera) {
     glm::vec3 cameraPos = camera->getPosition();
     deleteChunks(chunkManager, cameraPos);
     createChunks(chunkManager, cameraPos);
