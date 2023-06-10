@@ -54,4 +54,8 @@ glm::vec3 FlyingCameraController::getPosition(){
     return m_camera.getPosition();
 }
 
+glm::vec3 FlyingCameraController::getDirection() {
+    return m_camera.getFrontDirection();
+}
+
 } // namespace control
