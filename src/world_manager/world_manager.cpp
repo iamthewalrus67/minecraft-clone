@@ -6,7 +6,20 @@ world::WorldManager::WorldManager(siv::PerlinNoise::seed_type height_seed,
                                   m_heightSeed(height_seed),
                                   m_tempSeed(temp_seed),
                                   m_heightNoise(m_heightSeed),
-                                  m_tempNoise(m_tempSeed){};
+                                  m_tempNoise(m_tempSeed){
+}
+
+void world::WorldManager::deleteCreateChunks(rend::ChunkManager &chunkManager,
+                                             control::FlyingCameraController &camera) {
+    glm::vec3 cameraPos = camera.getPosition();
+    deleteChunks(cameraPos);
+}
+
+void world::WorldManager::deleteChunks(const glm::vec3 &camera_pos) {
+
+}
+
+
 
 void world::WorldManager::printNoisesSamples() {
     for (int y = 0; y < 5; ++y){
