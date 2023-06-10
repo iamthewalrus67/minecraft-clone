@@ -40,9 +40,6 @@ void App::init() {
     Logger::instance().init();
     Logger::setDebugMode(true);
 
-    world::WorldManager wm = world::WorldManager();
-    wm.printNoisesSamples();
-
     // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to
     // create a render thread. Most graphics APIs must be used on the same
     // thread that created the window.
@@ -77,13 +74,13 @@ void App::initRenderIternal() {
 
     // EXAMPLE: This is how you would add/erase a chunk from the buffer
     // TODO: REMOVE
-    auto &c = m_renderer.getChunkManagerRef();
-    for (int i = 0; i < 8; ++i) {
-        for (int j = 0; j < 8; ++j) {
-            auto& chunk = c.addChunk(glm::vec3{i * rend::Chunk::WIDTH_X, 0.0f, j * rend::Chunk::DEPTH_Z});
-            initTestChunk(&chunk);
-        }
-    }
+//    auto &c = m_renderer.getChunkManagerRef();
+//    for (int i = 0; i < 8; ++i) {
+//        for (int j = 0; j < 8; ++j) {
+//            auto& chunk = c.addChunk(glm::vec3{i * rend::Chunk::WIDTH_X, 0.0f, j * rend::Chunk::DEPTH_Z});
+//            initTestChunk(&chunk);
+//        }
+//    }
 
     int width, height;
     m_window.getSize(&width, &height);
@@ -108,6 +105,9 @@ void App::start() {
 
     int width = 1024, height = 768;
     m_window.getSize(&width, &height);
+
+    world::WorldManager wm = world::WorldManager();
+    wm.printNoisesSamples();
 
     while (!m_window.shouldClose()) {
         m_window.pollEvents();
@@ -159,6 +159,10 @@ void App::start() {
             glm::value_ptr(m_cameraController->getCamera().getProjectionMatrix()));
 
         bgfx::touch(0);
+
+
+        wm.deleteCreateChunks(m_renderer.getChunkManagerRef(), m_cameraController);
+
 
         m_renderer.render();
 
