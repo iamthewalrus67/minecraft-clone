@@ -2,6 +2,7 @@
 // Created by adeon on 6/8/23.
 //
 #include <iostream>
+#include <cmath>
 
 #include "chunk_manager.hpp"
 
@@ -36,7 +37,7 @@ namespace rend {
         glm::ivec3 aliquotPos = glm::ivec3{
                 static_cast<int>(pos.x) - static_cast<int>(pos.x) % Chunk::WIDTH_X,
                 static_cast<int>(pos.y) - static_cast<int>(pos.y) % Chunk::HEIGHT_Y,
-                static_cast<int>(pos.z) - static_cast<int>(pos.z) % Chunk::DEPTH_Z,
+                static_cast<int>(pos.z) - static_cast<int>(pos.z) % Chunk::DEPTH_Z
         };
 
         try {

@@ -77,7 +77,7 @@ void App::initRenderIternal() {
     auto &c = m_renderer.getChunkManagerRef();
     for (int i = 0; i < 8; ++i) {
         for (int j = 0; j < 8; ++j) {
-            auto& chunk = c.addChunk(glm::vec3{i * rend::Chunk::WIDTH_X, 0.0f, j * rend::Chunk::DEPTH_Z});
+            auto& chunk = c.addChunk(glm::vec3{-64.0f + i * rend::Chunk::WIDTH_X, 0.0f, -64.0f +  j * rend::Chunk::DEPTH_Z});
             initTestChunk(&chunk);
         }
     }
@@ -128,7 +128,8 @@ void App::start() {
         // TODO: REMOVE
         if (keyboard.isJustPressed(GLFW_KEY_F)) {
             auto& a = m_renderer.getChunkManagerRef();
-            auto cOpt = a.getChunkRefFromGlobalPos(glm::vec3{10, 10, 10});
+            auto cOpt = a.getChunkRefFromGlobalPos(glm::vec3{-10, 0, -10});
+            std::cout << cOpt->getChunkGlobalPos().x << " " << cOpt->getChunkGlobalPos().y << " " << cOpt->getChunkGlobalPos().z << std::endl;
             cOpt->setBlock(glm::vec3{15, 0, 0}, 0);
         }
 
