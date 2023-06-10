@@ -22,7 +22,7 @@ Ray::intersectBlock(std::function<bool(glm::ivec3)> isBlockFound, float maxDista
 
     for (;;) {
         if (isBlockFound(p)) {
-            return std::make_optional<Intersection>(p, d);
+            return std::optional(Intersection{p, d});
         }
 
         if (tMax.x < tMax.y) {

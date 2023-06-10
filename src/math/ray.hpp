@@ -5,10 +5,10 @@
 #ifndef COOL_GAME_RAY_HPP
 #define COOL_GAME_RAY_HPP
 
-#include <glm/glm.hpp>
 #include <optional>
 #include <functional>
 #include "misc.hpp"
+#include "glm/glm.hpp"
 
 namespace math {
 

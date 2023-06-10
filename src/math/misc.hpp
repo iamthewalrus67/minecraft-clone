@@ -6,7 +6,6 @@
 #define COOL_GAME_MISC_HPP
 
 #include <glm/glm.hpp>
-
 // find the smallest positive t such that s + t * ds is an integer
 inline glm::vec3 intbound(glm::vec3 s, glm::vec3 ds) {
     glm::vec3 res;
