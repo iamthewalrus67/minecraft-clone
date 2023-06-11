@@ -1,5 +1,6 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <iostream>
+#include <algorithm>
 
 #include "camera.hpp"
 #include "glm/ext/scalar_constants.hpp"
@@ -27,6 +28,7 @@ void Camera::updateScreenSize(float screenWidth, float screenHeight) {
 
 void Camera::addRotation(const glm::vec3 &angles) {
     m_rotation += angles;
+    m_rotation.x = std::clamp(m_rotation.x, -1.5708f, 1.5708f); // 1.5708 is 90 degrees in radians
     if (m_rotation.x >= glm::pi<float>()) {
         m_rotation.x = glm::pi<float>();
     } else if (m_rotation.x <= -glm::pi<float>()) {
