@@ -12,6 +12,8 @@ namespace player {
 
 class Player {
 private:
+    static constexpr float MINING_DISTANCE = 4.0f;
+
     std::shared_ptr<control::FlyingCameraController> m_cameraController;
     rend::ChunkManager& m_chunkManager;
 

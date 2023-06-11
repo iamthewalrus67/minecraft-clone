@@ -11,20 +11,23 @@ void Player::update() {
     Keyboard &keyboard = Keyboard::instance();
     Mouse &mouse = Mouse::instance();
 
+    // Movement
     glm::vec3 offset = glm::vec3{0.0f, 0.0f, 0.0f};
     for (auto &key : MovementSettings::MOVEMENT_BINDS) {
         if (keyboard.isPressed(key)) {
             offset += MovementSettings::MOVEMENT_BIND_MAP[key];
         }
     }
-
     if (glm::length(offset) > 0) {
         offset = glm::normalize(offset);
         m_cameraController->moveCamera(offset);
     }
 
+    bool shouldMine = mouse.isLeftButtonJustPressed();
+    bool shouldPlace = mouse.isRightButtonJustPressed();
+
     // Block destruction
-    if (mouse.isLeftButtonJustPressed()) {
+    if (shouldMine || shouldPlace) {
         auto intersection = math::Ray{m_cameraController->getPosition(), m_cameraController->getDirection()}
             .intersectBlock([&](auto p) {
             auto chunk = m_chunkManager.getChunkRefFromGlobalPos(p);
@@ -33,12 +36,22 @@ void Player::update() {
             }
             auto blockId = chunk->getBlockDataFromGlobalPos(p).blockID;
             return blockId != rend::BLOCKS::AIR;
-        }, 4.0f);
+        }, MINING_DISTANCE);
+
         if (intersection) {
-            auto chunk = m_chunkManager.getChunkRefFromGlobalPos(intersection->position);
+            auto chunk =
+                    m_chunkManager.getChunkRefFromGlobalPos(shouldMine ?
+                                                            intersection->position :
+                                                            intersection->position + intersection->direction);
             if (chunk) {
-                auto block = chunk->getBlockDataFromGlobalPos(intersection->position);
-                chunk->setBlock(block.localChunkPos, rend::BLOCKS::AIR);
+                auto block =
+                        chunk->getBlockDataFromGlobalPos(shouldMine ?
+                        intersection->position :
+                        intersection->position + intersection->direction);
+
+                chunk->setBlock(block.localChunkPos, shouldMine ?
+                                                    rend::BLOCKS::AIR :
+                                                    rend::BLOCKS::SAND);
             }
         }
     }
