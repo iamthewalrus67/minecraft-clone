@@ -1,4 +1,3 @@
-#include <algorithm>
 #include "flying_camera_controller.hpp"
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
@@ -13,7 +12,6 @@ FlyingCameraController::FlyingCameraController(float fovDeg,
     : m_camera{fovDeg, screenWH.first, screenWH.second, position} {}
 
 void FlyingCameraController::captureInputAndApply() {
-//    handleMovement();
     handleRotation();
 }
 
