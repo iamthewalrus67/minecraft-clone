@@ -15,23 +15,18 @@ namespace world{
     constexpr double DEF_RENDDIST = 20;
     // the bigger it is the smoother the noise is
     constexpr double frequency = 100.;
+    constexpr double snow_freq = 25.;
+    constexpr double temp_freq = 150.;
     // the bigger it is the more details there are
     constexpr int OCTAVES = 4;
 
-    constexpr double snow_freq = 25.;
-
     class WorldManager{
     public:
-        // Main constructor which takes N seeds for each noise
-        [[maybe_unused]] WorldManager(siv::PerlinNoise::seed_type height_seed,
-                     siv::PerlinNoise::seed_type snow_seed,
-                     double rend_dist=DEF_RENDDIST);
-
         // Constructor for one specified seed, each next seed would be taken as next int number after previous
-        [[maybe_unused]] explicit WorldManager(siv::PerlinNoise::seed_type init_seed, double rend_dist=DEF_RENDDIST): WorldManager(init_seed, init_seed+1) {};
+        [[maybe_unused]] explicit WorldManager(siv::PerlinNoise::seed_type init_seed, double rend_dist=DEF_RENDDIST);
 
         // Constructor that uses defined default seed
-        [[maybe_unused]] explicit WorldManager(double rend_dist=DEF_RENDDIST): WorldManager(DEF_SEED, DEF_SEED+1){};
+        [[maybe_unused]] explicit WorldManager(double rend_dist=DEF_RENDDIST): WorldManager(DEF_SEED){};
         ~WorldManager() = default;
 
         void deleteCreateChunks(rend::ChunkManager &chunkManager,
@@ -40,9 +35,11 @@ namespace world{
     private:
         siv::PerlinNoise::seed_type m_heightSeed;
         siv::PerlinNoise::seed_type m_snowSeed;
+        siv::PerlinNoise::seed_type m_tempSeed;
 
         siv::PerlinNoise m_heightNoise;
         siv::PerlinNoise m_snowNoise;
+        siv::PerlinNoise m_tempNoise;
 
         std::vector<glm::vec3> m_renderedChunksPositions{};
         glm::ivec3 m_chunkDimensions;

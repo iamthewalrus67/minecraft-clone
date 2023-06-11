@@ -1,13 +1,14 @@
 #include "world_manager/world_manager.hpp"
 
 
-world::WorldManager::WorldManager(siv::PerlinNoise::seed_type height_seed,
-                                  siv::PerlinNoise::seed_type snow_seed,
+world::WorldManager::WorldManager(siv::PerlinNoise::seed_type init_seed,
                                   double rend_dist):
-                                  m_heightSeed(height_seed),
-                                  m_snowSeed(snow_seed),
+                                  m_heightSeed(init_seed),
+                                  m_snowSeed(init_seed+1),
+                                  m_tempSeed(init_seed+2),
                                   m_heightNoise(m_heightSeed),
                                   m_snowNoise(m_snowSeed),
+                                  m_tempNoise(m_tempSeed),
                                   m_chunkDimensions{rend::Chunk::WIDTH_X, rend::Chunk::HEIGHT_Y, rend::Chunk::DEPTH_Z},
                                   m_renderDistance(rend_dist){
 }
@@ -40,33 +41,74 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
     for (uint32_t x = 0; x < rend::Chunk::WIDTH_X; ++x) {
         for (uint32_t z = 0; z < rend::Chunk::DEPTH_Z; ++z) {
             auto remapedCoords = glm::ivec3{chunkPos.x + x - m_chunkDimensions.x/2, 0, chunkPos.z + z - m_chunkDimensions.z};
+
+            double temperature = m_tempNoise.octave2D_01(remapedCoords.x / world::temp_freq,
+                                                         remapedCoords.z / world::temp_freq, 10, 0.65);
+
+            double h_persistance = (temperature < 0.1) ? 1. - (temperature * 4): 0.3;
             auto height = static_cast<uint32_t>(m_heightNoise.octave2D_01(remapedCoords.x / world::frequency,
-                                                                          remapedCoords.z / world::frequency, world::OCTAVES)
-                                                                                  * m_chunkDimensions.y / 2.
-                                                                                  + m_chunkDimensions.y / 2.);
-            auto snow_height = static_cast<uint32_t>(m_snowNoise.noise2D_01(remapedCoords.x / world::snow_freq,
-                                                                             remapedCoords.z / world::snow_freq) * (m_chunkDimensions.y / 8.));
-            //            auto height = static_cast<uint32_t>(m_heightNoise.noise2D_01(remapedCoords.x / world::frequency, remapedCoords.z / world::frequency) * m_chunkDimensions.y / 2 + m_chunkDimensions.y / 2);
+                                                                          remapedCoords.z / world::frequency,
+                                                                          world::OCTAVES,
+                                                                          h_persistance)
+                                                * m_chunkDimensions.y / 1.8
+                                                + m_chunkDimensions.y / 2.3);
+
+            auto h = m_snowNoise.noise2D_01(remapedCoords.x / world::snow_freq,
+                                            remapedCoords.z / world::snow_freq);
+            auto sand_height = static_cast<uint32_t>(h * 2);
+            auto snow_height = static_cast<uint32_t>(h * (m_chunkDimensions.y / 5.));
+
+//            std::cout<<temperature<<std::endl;
+
             for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
                 if(y <= height - 3){
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
                 }
-                else if(y <= height && height <= m_chunkDimensions.y - snow_height){
-                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
+                else if(temperature < 0.9){
+                    if(y == height && ((static_cast<uint32_t>((m_chunkDimensions.y / 10. * 6.))) <= height && height <= (static_cast<uint32_t>((m_chunkDimensions.y / 10. * 7.)) + sand_height))){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SAND);
+                    }
+                    else if(y < height && height <= m_chunkDimensions.y - snow_height){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::DIRT);
+                    }
+                    else if(y == height &&
+                            height <= m_chunkDimensions.y - snow_height){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
+                    }
+                    else if(y < height) {
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
+                    }
+                    else if(y == height){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW_POWDER);
+                    }
+                    else if(y < (m_chunkDimensions.y / 10. * 7.)){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
+                    }
+
+                    else{
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
+                    }
                 }
-                else if(y <= height){
-                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW);
+                else if(temperature >= 0.9){
+                    if(y <= height - 3){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
+                    }
+                    else if(y < height){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SAND);
+                    }
+                    else if(y <= (m_chunkDimensions.y / 10. * 7.)){
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
+                    }
+                    else{
+                        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
+                    }
                 }
-                else if(y <= (m_chunkDimensions.y / 10. * 7.)){
-                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
-                }
-                else{
-                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
-                }
+
             }
         }
     }
 }
+
 
 void world::WorldManager::deleteChunks(rend::ChunkManager &chunkManager, const glm::vec3 &cameraPos) {
     auto it = m_renderedChunksPositions.begin();
