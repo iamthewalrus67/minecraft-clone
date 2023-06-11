@@ -67,7 +67,7 @@ namespace rend {
 
     bool Chunk::isBlockNotFull(const glm::ivec3& posInChunk) const {
         BLOCKS b = operator[](posInChunk);
-        return (b == BLOCKS::WATER || b == BLOCKS::LAVA);
+        return (b == BLOCKS::WATER || b == BLOCKS::LAVA || b == BLOCKS::SNOW_POWDER);
     }
 
     bool Chunk::isOutOfBounds(const glm::ivec3 &posInChunk) const {
