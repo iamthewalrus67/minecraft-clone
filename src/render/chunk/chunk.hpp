@@ -54,6 +54,8 @@ namespace rend {
         [[nodiscard]] Block getBlockDataFromGlobalPos(const glm::vec3& globalPos);
 
         [[nodiscard]] bool isBlockAir(const glm::ivec3& posInChunk) const;
+        //! Returns true if the block does not take up entire block size, LIKE WATER LAVA, NOT AIR!!!!!
+        [[nodiscard]] bool isBlockNotFull(const glm::ivec3& posInChunk) const;
         [[nodiscard]] bool isOutOfBounds(const glm::ivec3& posInChunk) const;
         [[nodiscard]] bool isInitialized() const { return m_initialized; }
         //! Check if chunk was changed so we now whether it should be remeshed

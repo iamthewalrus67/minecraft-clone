@@ -34,6 +34,11 @@ namespace rend {
         return operator[](posInChunk) == BLOCKS::AIR;
     }
 
+    bool Chunk::isBlockNotFull(const glm::ivec3& posInChunk) const {
+        BLOCKS b = operator[](posInChunk);
+        return (b == BLOCKS::WATER || b == BLOCKS::LAVA);
+    }
+
     bool Chunk::isOutOfBounds(const glm::ivec3 &posInChunk) const {
         if (posInChunk.x < 0 || posInChunk.y < 0 || posInChunk.z < 0 ||
             posInChunk.x >= Chunk::WIDTH_X || posInChunk.y >= Chunk::HEIGHT_Y || posInChunk.z >= Chunk::DEPTH_Z) {

@@ -121,23 +121,36 @@ namespace rend {
                         util::Direction dir{static_cast<util::Direction::INDEX>(i)};
                         const size_t offset = m_vertices.size();
 
+                        bool isNeighborLiquid = false;
                         // If neighbor is air and we are not air: emit a face
-                        if (m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) && !m_chunk.isBlockAir(bIdx)) {
+                        if ((m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) || m_chunk.isBlockNotFull(bIdx + dir.toGlmVec3())) && (!m_chunk.isBlockAir(bIdx))) {
                             if (m_chunk.isOutOfBounds(bIdx + dir.toGlmVec3())) {
+                                if (!neighborChunks[dir.idx]) { continue; }
                                 glm::ivec3 newChunkBIdx = bIdx + dir.toGlmVec3();
                                 newChunkBIdx.x = newChunkBIdx.x % Chunk::WIDTH_X;
                                 newChunkBIdx.y = newChunkBIdx.y % Chunk::HEIGHT_Y;
                                 newChunkBIdx.z = newChunkBIdx.z % Chunk::DEPTH_Z;
-                                if (!neighborChunks[dir.idx] || (neighborChunks[dir.idx] && !neighborChunks[dir.idx]->isBlockAir(newChunkBIdx))) {
+                                isNeighborLiquid = neighborChunks[dir.idx]->isBlockNotFull(newChunkBIdx);
+                                if (!neighborChunks[dir.idx]->isBlockAir(newChunkBIdx) && !isNeighborLiquid) {
                                     continue;
                                 }
+                            } else {
+                                isNeighborLiquid = m_chunk.isBlockNotFull(bIdx + dir.toGlmVec3());
                             }
+                            if (isNeighborLiquid && m_chunk.isBlockNotFull(bIdx)) { continue; }
 
                             glm::vec2 textureOffset = getTextureOffset(blockID, dir);
                             // emit vertices
                             for (size_t i = 0; i < 4; i++) {
                                 ChunkRenderer::ChunkVertex vertex;
-                                vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
+                                // TODO: SLOW
+                                if (dir.idx == 4 && blockID == BLOCKS::WATER && !isNeighborLiquid) {
+                                    auto newBlockTopOffset = CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
+                                    newBlockTopOffset.y *= 0.9f;
+                                    vertex.pos = blockPos + newBlockTopOffset;
+                                } else {
+                                    vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
+                                }
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
                                 vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
                                 m_vertices.push_back(vertex);
