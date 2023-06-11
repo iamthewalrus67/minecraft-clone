@@ -33,6 +33,8 @@ namespace rend {
         //! Fill the neighbor chunks with pointers based on the given chunk position
         void fillNeighborChunksFromPos(std::array<Chunk*, 6>* neighbors, const glm::ivec3& globalChunkPos);
 
+        [[nodiscard]] Chunk* getNeighboorByDir(util::Direction dir, const glm::ivec3& globalChunkPos);
+
         //! Get all the chunk renderers, done so that the renderer can pull them
         [[nodiscard]] ChunkRendererMap& getChunkRenderers() { return m_chunkData; }
 

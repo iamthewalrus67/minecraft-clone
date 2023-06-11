@@ -38,17 +38,25 @@ namespace rend {
         static constexpr uint32_t DEPTH_Z = 16;
         static constexpr float BLOCK_SIZE = 1.0f;
 
-        Chunk(): m_initialized{false}, m_toBeMeshed{false} {}
+        Chunk(): m_initialized{false}, m_toBeMeshed{false}, m_toBeMeshedByPlayer{false} {}
 
         //! Initialize the chunk
         void init(const glm::vec3& pos);
 
         //! Get the BlockID ref at the positiov provided by the ivec
         [[nodiscard]] BLOCKS operator[](const glm::ivec3 &pos) const;
-        //! Set the block at the blockID(so the chunk can log that is was changed)
+        //! Set the block at the blockID(so the chunk can log that is was changed), player has a separate function
         void setBlock(const glm::ivec3 &pos, BlockID blockId);
+
+        //! The same as set block but logs the past changed block potion so that we can reload the needed neighbor chunk
+        //! If change is on the edge
+        void setBlockByPlayer(const glm::ivec3 &pos, BlockID blockId);
         //! Get the actual position of a singular block based on chunk position
         void positionOf(glm::vec3* posToFill, const glm::ivec3& posInChunk);
+
+        //! If waitForReMeshByPlayer is true, return the direction of the neighbor chunk to change
+        //! The maximum of 2 dirs can be filled
+        uint32_t getDirOfNeighborToBeChanged(std::array<util::Direction, 2>* dirs);
 
         //! Get the block at the specified globalPosition
         [[nodiscard]] Block getBlockDataFromGlobalPos(const glm::vec3& globalPos);
@@ -60,16 +68,27 @@ namespace rend {
         [[nodiscard]] bool isInitialized() const { return m_initialized; }
         //! Check if chunk was changed so we now whether it should be remeshed
         [[nodiscard]] bool waitForReMesh() const { return m_toBeMeshed; }
+        //! If the last remesh change was by player, this will return true, so we can call getDirOfNeighborToBeChanged
+        //! And change the needed neighbor chunk
+        [[nodiscard]] bool waitForReMeshByPlayer() const {
+            return m_toBeMeshedByPlayer;
+        }
         //! Gets the position of the chunk
         [[nodiscard]] glm::vec3 getChunkGlobalPos() { return m_positionBL; }
         //! Tell the chunk that ts was remeshed
-        void logReMesh() { m_toBeMeshed = false; }
+        void logReMesh() {
+            m_toBeMeshed = false;
+            m_toBeMeshedByPlayer = false;
+        }
         void setToReMesh() { m_toBeMeshed = true; }
     private:
         std::array<BlockID, WIDTH_X * HEIGHT_Y * DEPTH_Z> m_data{};
         glm::vec3 m_positionBL;
+        // The position that the player changed last in chunk
+        glm::ivec3 m_lastPlayerChangedPosition;
         bool m_initialized;
         bool m_toBeMeshed;
+        bool m_toBeMeshedByPlayer;
     };
 
     //! Just a test method for initing a test chunk
