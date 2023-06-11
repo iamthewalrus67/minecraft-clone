@@ -12,11 +12,11 @@ namespace world{
     // default seed
     constexpr siv::PerlinNoise::seed_type DEF_SEED = 123456u;
     // in chunks
-    constexpr double DEF_RENDDIST = 4;
+    constexpr double DEF_RENDDIST = 20;
     // the bigger it is the smoother the noise is
     constexpr double frequency = 100.;
     constexpr double snow_freq = 25.;
-    constexpr double temp_freq = 1000.;
+    constexpr double temp_freq = 150.;
     // the bigger it is the more details there are
     constexpr int OCTAVES = 4;
 
@@ -26,7 +26,7 @@ namespace world{
         [[maybe_unused]] explicit WorldManager(siv::PerlinNoise::seed_type init_seed, double rend_dist=DEF_RENDDIST);
 
         // Constructor that uses defined default seed
-        [[maybe_unused]] explicit WorldManager(double rend_dist=DEF_RENDDIST): WorldManager(DEF_SEED, DEF_SEED+1){};
+        [[maybe_unused]] explicit WorldManager(double rend_dist=DEF_RENDDIST): WorldManager(DEF_SEED){};
         ~WorldManager() = default;
 
         void deleteCreateChunks(rend::ChunkManager &chunkManager,
