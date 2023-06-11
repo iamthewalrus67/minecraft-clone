@@ -12,13 +12,14 @@ namespace world{
     // default seed
     constexpr siv::PerlinNoise::seed_type DEF_SEED = 123456u;
     // in chunks
-    constexpr double DEF_RENDDIST = 20;
+    constexpr double DEF_RENDDIST = 14;
     // the bigger it is the smoother the noise is
     constexpr double frequency = 100.;
-    constexpr double snow_freq = 25.;
+    constexpr double snow_freq = 100.;
     constexpr double temp_freq = 150.;
+    constexpr double trees_freq = 0.25;
     // the bigger it is the more details there are
-    constexpr int OCTAVES = 4;
+    constexpr int OCTAVES = 6;
 
     class WorldManager{
     public:
@@ -36,10 +37,13 @@ namespace world{
         siv::PerlinNoise::seed_type m_heightSeed;
         siv::PerlinNoise::seed_type m_snowSeed;
         siv::PerlinNoise::seed_type m_tempSeed;
+        siv::PerlinNoise::seed_type m_treesSeed;
 
         siv::PerlinNoise m_heightNoise;
         siv::PerlinNoise m_snowNoise;
         siv::PerlinNoise m_tempNoise;
+        siv::PerlinNoise m_treesNoise;
+
 
         std::vector<glm::vec3> m_renderedChunksPositions{};
         glm::ivec3 m_chunkDimensions;
@@ -51,6 +55,7 @@ namespace world{
         void deleteChunks(rend::ChunkManager &chunkManager, const glm::vec3 &cameraPos);
         void createChunks(rend::ChunkManager &chunkManager, const glm::vec3 &cameraPos);
         void fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos);
+        bool handleTrees(glm::ivec3 coords,  double persistance, int32_t h);
 
         static double calculate_dist(glm::vec3 cameraPos, glm::ivec3 chunkPos);
     };

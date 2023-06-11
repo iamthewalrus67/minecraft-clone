@@ -45,7 +45,7 @@ namespace rend {
                 if (dir == util::Direction::TOP || dir == util::Direction::BOTTOM) { return glm::vec2{3, 1}; }
                 else { return glm::vec2{2, 1}; }
             case OAK_LEAVES:
-                return glm::vec2{3, 1};
+                return glm::vec2{4, 1};
             case COBBLESTONE:
                 return glm::vec2{2, 2};
             case COAL:
