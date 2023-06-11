@@ -12,15 +12,19 @@ namespace world{
     // default seed
     constexpr siv::PerlinNoise::seed_type DEF_SEED = 123456u;
     // in chunks
-    constexpr double DEF_RENDDIST = 8;
+    constexpr double DEF_RENDDIST = 20;
     // the bigger it is the smoother the noise is
     constexpr double frequency = 100.;
+    // the bigger it is the more details there are
+    constexpr int OCTAVES = 4;
+
+    constexpr double snow_freq = 25.;
 
     class WorldManager{
     public:
         // Main constructor which takes N seeds for each noise
         [[maybe_unused]] WorldManager(siv::PerlinNoise::seed_type height_seed,
-                     siv::PerlinNoise::seed_type temp_seed,
+                     siv::PerlinNoise::seed_type snow_seed,
                      double rend_dist=DEF_RENDDIST);
 
         // Constructor for one specified seed, each next seed would be taken as next int number after previous
@@ -30,17 +34,15 @@ namespace world{
         [[maybe_unused]] explicit WorldManager(double rend_dist=DEF_RENDDIST): WorldManager(DEF_SEED, DEF_SEED+1){};
         ~WorldManager() = default;
 
-        // test function to print noises samples
-        void printNoisesSamples();
         void deleteCreateChunks(rend::ChunkManager &chunkManager,
                                 std::shared_ptr<control::FlyingCameraController> camera);
 
     private:
         siv::PerlinNoise::seed_type m_heightSeed;
-        siv::PerlinNoise::seed_type m_tempSeed;
+        siv::PerlinNoise::seed_type m_snowSeed;
 
         siv::PerlinNoise m_heightNoise;
-        siv::PerlinNoise m_tempNoise;
+        siv::PerlinNoise m_snowNoise;
 
         std::vector<glm::vec3> m_renderedChunksPositions{};
         glm::ivec3 m_chunkDimensions;

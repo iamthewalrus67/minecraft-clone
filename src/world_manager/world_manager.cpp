@@ -2,14 +2,15 @@
 
 
 world::WorldManager::WorldManager(siv::PerlinNoise::seed_type height_seed,
-                                  siv::PerlinNoise::seed_type temp_seed,
+                                  siv::PerlinNoise::seed_type snow_seed,
                                   double rend_dist):
                                   m_heightSeed(height_seed),
-                                  m_tempSeed(temp_seed),
+                                  m_snowSeed(snow_seed),
                                   m_heightNoise(m_heightSeed),
-                                  m_tempNoise(m_tempSeed),
+                                  m_snowNoise(m_snowSeed),
                                   m_chunkDimensions{rend::Chunk::WIDTH_X, rend::Chunk::HEIGHT_Y, rend::Chunk::DEPTH_Z},
-                                  m_renderDistance(rend_dist){}
+                                  m_renderDistance(rend_dist){
+}
 
 void world::WorldManager::deleteCreateChunks(rend::ChunkManager &chunkManager,
                                              std::shared_ptr<control::FlyingCameraController> camera) {
@@ -39,10 +40,25 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
     for (uint32_t x = 0; x < rend::Chunk::WIDTH_X; ++x) {
         for (uint32_t z = 0; z < rend::Chunk::DEPTH_Z; ++z) {
             auto remapedCoords = glm::ivec3{chunkPos.x + x - m_chunkDimensions.x/2, 0, chunkPos.z + z - m_chunkDimensions.z};
-            auto height = static_cast<uint32_t>(m_heightNoise.noise2D_01(remapedCoords.x / world::frequency, remapedCoords.z / world::frequency) * m_chunkDimensions.y / 2 + m_chunkDimensions.y / 2);
+            auto height = static_cast<uint32_t>(m_heightNoise.octave2D_01(remapedCoords.x / world::frequency,
+                                                                          remapedCoords.z / world::frequency, world::OCTAVES)
+                                                                                  * m_chunkDimensions.y / 2.
+                                                                                  + m_chunkDimensions.y / 2.);
+            auto snow_height = static_cast<uint32_t>(m_snowNoise.noise2D_01(remapedCoords.x / world::snow_freq,
+                                                                             remapedCoords.z / world::snow_freq) * (m_chunkDimensions.y / 8.));
+            //            auto height = static_cast<uint32_t>(m_heightNoise.noise2D_01(remapedCoords.x / world::frequency, remapedCoords.z / world::frequency) * m_chunkDimensions.y / 2 + m_chunkDimensions.y / 2);
             for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
-                if(y <= height){
+                if(y <= height - 3){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
+                }
+                else if(y <= height && height <= m_chunkDimensions.y - snow_height){
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
+                }
+                else if(y <= height){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW);
+                }
+                else if(y <= (m_chunkDimensions.y / 10. * 7.)){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
                 }
                 else{
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
@@ -75,27 +91,4 @@ glm::ivec3 world::WorldManager::chunkGlobalPositionFromPosition(glm::vec3 globPo
 
 double world::WorldManager::calculate_dist(const glm::vec3 cameraPos, const glm::ivec3 chunkPos){
     return (std::sqrt(std::pow(cameraPos.x - chunkPos.x, 2) + std::pow(cameraPos.z - chunkPos.z, 2)));
-}
-
-void world::WorldManager::printNoisesSamples() {
-    for (int y = 0; y < 5; ++y){
-        for (int x = 0; x < 5; ++x){
-            const double val = m_heightNoise.noise2D_01((x * 0.01), (y * 0.01));
-
-            std::cout << val << '\t';
-        }
-
-        std::cout << '\n';
-    }
-
-
-    for (int y = 0; y < 5; ++y){
-        for (int x = 0; x < 5; ++x){
-            const double val = m_tempNoise.noise2D_01((x * 0.01), (y * 0.01));
-
-            std::cout << val << '\t';
-        }
-
-        std::cout << '\n';
-    }
 }
