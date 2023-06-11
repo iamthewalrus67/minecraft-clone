@@ -49,7 +49,7 @@ void Player::update() {
                         intersection->position :
                         intersection->position + intersection->direction);
 
-                chunk->setBlock(block.localChunkPos, shouldMine ?
+                chunk->setBlockByPlayer(block.localChunkPos, shouldMine ?
                                                     rend::BLOCKS::AIR :
                                                     rend::BLOCKS::SAND);
             }

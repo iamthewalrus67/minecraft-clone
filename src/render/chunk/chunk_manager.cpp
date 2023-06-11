@@ -36,6 +36,18 @@ namespace rend {
     void ChunkManager::reMeshChunks() {
         for (auto& chunkRenderer: m_chunkData) {
             auto& chunk = chunkRenderer.second.getChunkRef();
+            if (chunk.waitForReMeshByPlayer()) {
+                std::array<util::Direction, 2> dirs;
+                uint32_t dirCount = chunk.getDirOfNeighborToBeChanged(&dirs);
+                for (uint32_t i = 0; i < dirCount; ++i) {
+                    Chunk* neighborChunkToChange = getNeighboorByDir(dirs[i], chunk.getChunkGlobalPos());
+                    neighborChunkToChange->setToReMesh();
+                }
+            }
+        }
+
+        for (auto& chunkRenderer: m_chunkData) {
+            auto& chunk = chunkRenderer.second.getChunkRef();
             if (chunk.waitForReMesh()) {
                 std::array<Chunk*, 6> neighborChunks;
                 fillNeighborChunksFromPos(&neighborChunks, chunk.getChunkGlobalPos());
@@ -77,6 +89,11 @@ namespace rend {
         }
         (*neighbors)[4] = nullptr;
         (*neighbors)[5] = nullptr;
+    }
+
+    Chunk *ChunkManager::getNeighboorByDir(util::Direction dir, const glm::ivec3& globalChunkPos) {
+        int dim = (dir.idx < 2) ? Chunk::DEPTH_Z: Chunk::WIDTH_X;
+        return getChunkRefFromAliquotPos(globalChunkPos + dir.toGlmIVec3() * dim);
     }
 
     void ChunkManager::terminate() {
