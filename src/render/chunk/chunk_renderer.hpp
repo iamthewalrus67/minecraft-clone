@@ -56,7 +56,6 @@ namespace rend {
 
         bgfx::DynamicVertexBufferHandle m_dynamicVBH;
         bgfx::DynamicIndexBufferHandle  m_dynamicIBH;
-        bgfx::ProgramHandle m_programTemp;
     };
 } // rend
 

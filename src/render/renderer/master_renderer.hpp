@@ -26,6 +26,8 @@ namespace rend {
         ChunkManager m_chunkManager;
         Texture m_blockTexture;
         bgfx::UniformHandle m_blockTexSampler;
+
+        bgfx::ProgramHandle m_chunkProgram;
     };
 } // rend
 
