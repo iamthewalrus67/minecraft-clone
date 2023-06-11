@@ -24,8 +24,10 @@ namespace rend {
         COAL = 7,
         IRON = 8,
         SNOW = 9,
-        WATER = 10,
-        LAVA = 11
+        SNOW_POWDER = 10
+        WATER = 11,
+        LAVA = 12,
+        DIRT = 13
     };
 
     //! Get the offset in texture depending on block type
@@ -52,10 +54,14 @@ namespace rend {
                 return glm::vec2{5, 0};
             case SNOW:
                 return glm::vec2{3, 2};
+            case SNOW_POWDER:
+                return glm::vec2{3, 2};
             case WATER:
                 return glm::vec2{0, 15};
             case LAVA:
                 return glm::vec2{0, 14};
+            case DIRT:
+                return glm::vec2{2, 0};
             default:
                 return glm::vec2{0, 0};
         }
