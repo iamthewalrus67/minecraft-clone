@@ -4,8 +4,6 @@
 
 #include "render/util/direction.hpp"
 
-#include "shader_loading/shader_loading.hpp"
-
 namespace rend {
     bgfx::VertexLayout ChunkRenderer::ChunkVertex::layout;
 
@@ -79,12 +77,6 @@ namespace rend {
                 | BGFX_BUFFER_INDEX32
         );
 
-        // TODO: Temporary
-        bgfx::ShaderHandle vsh = loadShader("res/shaders/vs_simple.bin");
-        bgfx::ShaderHandle fsh = loadShader("res/shaders/fs_simple.bin");
-
-        m_programTemp = bgfx::createProgram(vsh, fsh, true);
-
         m_chunk.init(chunkPos);
     }
 
@@ -97,9 +89,6 @@ namespace rend {
 
         // Set render states.
         bgfx::setState(BGFX_STATE_DEFAULT);
-
-        // Submit primitive for rendering to view 0.
-        bgfx::submit(0, m_programTemp);
     }
 
     void ChunkRenderer::meshChunk(const std::array<Chunk*, 6> neighborChunks) {
@@ -190,6 +179,5 @@ namespace rend {
         // Cleanup.
         bgfx::destroy(m_dynamicVBH);
         bgfx::destroy(m_dynamicIBH);
-        bgfx::destroy(m_programTemp);
     }
 } // rend
