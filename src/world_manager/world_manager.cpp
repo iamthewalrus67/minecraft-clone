@@ -1,13 +1,14 @@
 #include "world_manager/world_manager.hpp"
 
 
-world::WorldManager::WorldManager(siv::PerlinNoise::seed_type height_seed,
-                                  siv::PerlinNoise::seed_type snow_seed,
+world::WorldManager::WorldManager(siv::PerlinNoise::seed_type init_seed,
                                   double rend_dist):
-                                  m_heightSeed(height_seed),
-                                  m_snowSeed(snow_seed),
+                                  m_heightSeed(init_seed),
+                                  m_snowSeed(init_seed+1),
+                                  m_tempSeed(init_seed+2),
                                   m_heightNoise(m_heightSeed),
                                   m_snowNoise(m_snowSeed),
+                                  m_tempNoise(m_tempSeed),
                                   m_chunkDimensions{rend::Chunk::WIDTH_X, rend::Chunk::HEIGHT_Y, rend::Chunk::DEPTH_Z},
                                   m_renderDistance(rend_dist){
 }
@@ -46,12 +47,16 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
                                                                                   + m_chunkDimensions.y / 2.);
             auto snow_height = static_cast<uint32_t>(m_snowNoise.noise2D_01(remapedCoords.x / world::snow_freq,
                                                                              remapedCoords.z / world::snow_freq) * (m_chunkDimensions.y / 8.));
-            //            auto height = static_cast<uint32_t>(m_heightNoise.noise2D_01(remapedCoords.x / world::frequency, remapedCoords.z / world::frequency) * m_chunkDimensions.y / 2 + m_chunkDimensions.y / 2);
+
+
             for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
                 if(y <= height - 3){
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
                 }
-                else if(y <= height && height <= m_chunkDimensions.y - snow_height){
+                else if(y < height && height <= m_chunkDimensions.y - snow_height){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::DIRT);
+                }
+                else if(y == height && height <= m_chunkDimensions.y - snow_height){
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
                 }
                 else if(y <= height){
