@@ -24,7 +24,7 @@ namespace rend {
         COAL = 7,
         IRON = 8,
         SNOW = 9,
-        SNOW_POWDER = 10
+        SNOW_POWDER = 10,
         WATER = 11,
         LAVA = 12,
         DIRT = 13

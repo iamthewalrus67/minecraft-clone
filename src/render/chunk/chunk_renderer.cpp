@@ -143,13 +143,17 @@ namespace rend {
                             // emit vertices
                             for (size_t i = 0; i < 4; i++) {
                                 ChunkRenderer::ChunkVertex vertex;
+                                auto newBlockTopOffset = CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) +
+                                                                                      UNIQUE_INDICES[i]]];
                                 // TODO: SLOW
                                 if (dir.idx == 4 && blockID == BLOCKS::WATER && !isNeighborLiquid) {
-                                    auto newBlockTopOffset = CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
                                     newBlockTopOffset.y *= 0.9f;
                                     vertex.pos = blockPos + newBlockTopOffset;
+                                } else if (blockID == BLOCKS::SNOW_POWDER) {
+                                    newBlockTopOffset.y *= 0.1f;
+                                    vertex.pos = blockPos + newBlockTopOffset;
                                 } else {
-                                    vertex.pos = blockPos + CHUNK_VERTICES[CHUNK_INDICES[(dir.idx * 6) + UNIQUE_INDICES[i]]];
+                                    vertex.pos = blockPos + newBlockTopOffset;
                                 }
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
                                 vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
