@@ -44,6 +44,9 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
                 if(y <= height){
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
                 }
+                else if(y <= 180){
+                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
+                }
                 else{
                     newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
                 }
