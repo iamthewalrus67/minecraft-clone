@@ -12,7 +12,6 @@ FlyingCameraController::FlyingCameraController(float fovDeg,
     : m_camera{fovDeg, screenWH.first, screenWH.second, position} {}
 
 void FlyingCameraController::captureInputAndApply() {
-//    handleMovement();
     handleRotation();
 }
 
@@ -29,10 +28,8 @@ void FlyingCameraController::handleRotation() {
 
     glm::vec3 rotation{0.0f, 0.0f, 0.0f};
 
-    if (!Mouse::instance().isLeftButtonPressed()) {
-        rotation.x -= Mouse::instance().getYMovement() * 0.001f;
-        rotation.y -= Mouse::instance().getXMovement() * 0.001f;
-    }
+    rotation.x -= Mouse::instance().getYMovement() * 0.001f;
+    rotation.y -= Mouse::instance().getXMovement() * 0.001f;
 
     if (glm::length(rotation) > 0) {
         m_camera.addRotation(rotation);
