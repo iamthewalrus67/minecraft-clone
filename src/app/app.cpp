@@ -44,9 +44,6 @@ void App::init() {
     Logger::instance().init();
     Logger::setDebugMode(true);
 
-    world::WorldManager wm = world::WorldManager();
-    wm.printNoisesSamples();
-
     // Call bgfx::renderFrame before bgfx::init to signal to bgfx not to
     // create a render thread. Most graphics APIs must be used on the same
     // thread that created the window.
@@ -104,7 +101,6 @@ void App::start() {
     m_window.getSize(&width, &height);
 
     world::WorldManager wm = world::WorldManager();
-    wm.printNoisesSamples();
 
     player::Player player{m_cameraController, m_renderer.getChunkManagerRef()};
 
