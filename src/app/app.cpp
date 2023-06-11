@@ -97,7 +97,7 @@ void App::start() {
     // Set view 0 to the same dimensions as the window and to clear the
     // color buffer.
     const bgfx::ViewId kClearView = 0;
-    bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x44ff);
+    bgfx::setViewClear(kClearView, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x6EB1FF);
     bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
     int width = 1024, height = 768;
