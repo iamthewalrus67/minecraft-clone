@@ -17,23 +17,47 @@ namespace rend {
         AIR = 0,
         GRASS = 1,
         SAND = 2,
-        STONE = 3
+        STONE = 3,
+        OAK_WOOD = 4,
+        OAK_LEAVES = 5,
+        COBBLESTONE = 6,
+        COAL = 7,
+        IRON = 8,
+        SNOW = 9,
+        WATER = 10,
+        LAVA = 11
     };
 
     //! Get the offset in texture depending on block type
     [[nodiscard]] inline glm::vec2 getTextureOffset(BLOCKS ID, util::Direction dir) {
-        if (ID == BLOCKS::GRASS) {
-            if (dir == util::Direction::TOP) { return glm::vec2{0, 0}; }
-            else if (dir == util::Direction::BOTTOM) { return glm::vec2{2, 0}; }
-            else { return glm::vec2{1, 0}; }
-        }
-
-        if (ID == BLOCKS::SAND) {
-            return glm::vec2{0, 1};
-        }
-
-        if (ID == BLOCKS::STONE) {
-            return glm::vec2{3, 0};
+        switch (ID) {
+            case GRASS:
+                if (dir == util::Direction::TOP) { return glm::vec2{0, 0}; }
+                else if (dir == util::Direction::BOTTOM) { return glm::vec2{2, 0}; }
+                else { return glm::vec2{1, 0}; }
+            case SAND:
+                return glm::vec2{0, 1};
+            case STONE:
+                return glm::vec2{3, 0};
+            case OAK_WOOD:
+                if (dir == util::Direction::TOP || dir == util::Direction::BOTTOM) { return glm::vec2{3, 1}; }
+                else { return glm::vec2{2, 1}; }
+            case OAK_LEAVES:
+                return glm::vec2{3, 1};
+            case COBBLESTONE:
+                return glm::vec2{2, 2};
+            case COAL:
+                return glm::vec2{4, 0};
+            case IRON:
+                return glm::vec2{5, 0};
+            case SNOW:
+                return glm::vec2{3, 2};
+            case WATER:
+                return glm::vec2{0, 15};
+            case LAVA:
+                return glm::vec2{0, 14};
+            default:
+                return glm::vec2{0, 0};
         }
     }
 }

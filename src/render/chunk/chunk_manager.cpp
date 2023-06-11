@@ -29,15 +29,6 @@ namespace rend {
         if (it == m_chunkData.end()) { return false; }
         m_chunkData.erase(it);
 
-        // TODO: MAYBE REMOVE
-        auto& chunk = it->second.getChunkRef();
-        std::array<Chunk*, 6> neighboorChunks;
-        fillNeighborChunksFromPos(&neighboorChunks, chunk.getChunkGlobalPos());
-
-        for (auto chunkPtr: neighboorChunks) {
-            if (chunkPtr) chunkPtr->setToReMesh();
-        }
-
         (*it).second.terminate();
         return true;
     }
