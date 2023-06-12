@@ -13,6 +13,7 @@ namespace rend {
                 .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
                 .add(bgfx::Attrib::Normal, 3, bgfx::AttribType::Float, true)
                 .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
+                .add(bgfx::Attrib::Color0, 3, bgfx::AttribType::Float)
                 .end();
     }
 
@@ -146,6 +147,7 @@ namespace rend {
                                 }
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
                                 vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
+                                vertex.color = glm::vec3(1, 1, 1);
                                 m_vertices.push_back(vertex);
                             }
 
