@@ -21,7 +21,7 @@ namespace rend {
     }
 
     void MasterRenderer::render() {
-        bgfx::setTexture(0, m_blockTexSampler, m_blockTexture.handle);
+        bgfx::setTexture(0, m_blockTexSampler, m_blockTexture.handle, defaultSamplerFlags);
 
         m_chunkManager.reMeshChunks();
 

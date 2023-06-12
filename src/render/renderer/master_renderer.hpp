@@ -10,6 +10,11 @@
 
 namespace rend {
     class MasterRenderer{
+        static constexpr uint64_t defaultSamplerFlags =
+        BGFX_SAMPLER_MIN_POINT
+        | BGFX_SAMPLER_MAG_POINT
+        | BGFX_SAMPLER_MIP_POINT
+        | BGFX_SAMPLER_U_CLAMP;
     public:
         //! Initialize all the basic data
         void init();
