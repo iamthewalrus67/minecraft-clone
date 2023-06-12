@@ -69,7 +69,7 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
 
             for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
                 if(y <= height - 3){
-                    handleOres(glm::ivec3{x, y, z}, remapedCoords, height, newChunk);
+                    handleOresCaves(glm::ivec3{x, y, z}, remapedCoords, height, newChunk);
                 }
                 else if(temperature < 0.9){
                     handlePlains(glm::ivec3{x, y, z}, remapedCoords, height, sand_height, snow_height, h_persistance, newChunk);
@@ -83,11 +83,15 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
     }
 }
 
-void world::WorldManager::handleOres(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk){
+
+void world::WorldManager::handleOresCaves(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk){
     uint32_t x = pos.x;
     uint32_t y = pos.y;
     uint32_t z = pos.z;
-    if(m_ironNoise.octave3D_01(remapedCoords.x / iron_freq, y / iron_freq, remapedCoords.z / iron_freq, 5, 0.8) >= 0.995){
+    if(pos.y <= height and m_snowNoise.octave3D_01(remapedCoords.x / 100., pos.y / 100., remapedCoords.z / 100., 5, 0.8) >= 0.95){
+            newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
+    }
+    else if(m_ironNoise.octave3D_01(remapedCoords.x / iron_freq, y / iron_freq, remapedCoords.z / iron_freq, 5, 0.8) >= 0.995){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::IRON);
     }
     else if(y >= m_chunkDimensions.y * coalLowerBound and m_coalNoise.octave3D_01(remapedCoords.x / coal_freq, y / coal_freq, remapedCoords.z / coal_freq, 5, 0.85) >= 0.975){

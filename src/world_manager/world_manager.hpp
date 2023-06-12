@@ -79,7 +79,7 @@ namespace world{
         bool handleTrees(glm::ivec3 coords,  double persistance, int32_t h);
         void handlePlains(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, uint32_t sand_height, uint32_t snow_height, double h_persistance, rend::Chunk& newChunk);
         void handleDesert(glm::ivec3 pos, uint32_t height, rend::Chunk& newChunk);
-        void handleOres(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk);
+        void handleOresCaves(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk);
 
         static double calculate_dist(glm::vec3 cameraPos, glm::ivec3 chunkPos);
     };
