@@ -18,6 +18,8 @@ namespace rend {
         bgfx::ShaderHandle fsh = loadShader("res/shaders/fs_simple.bin");
 
         m_chunkProgram = bgfx::createProgram(vsh, fsh, true);
+
+        m_uiRenderer.init();
     }
 
     void MasterRenderer::render() {
@@ -31,6 +33,15 @@ namespace rend {
 
             bgfx::submit(0, m_chunkProgram);
         }
+
+        m_uiRenderer.render();
+    }
+
+    void MasterRenderer::setScreenSize(int screenWidth, int screenHeight) {
+        m_screenWidth = screenWidth;
+        m_screenHeight = screenHeight;
+
+        m_uiRenderer.update(screenWidth, screenHeight);
     }
 
     void MasterRenderer::terminate() {
@@ -38,5 +49,6 @@ namespace rend {
         bgfx::destroy(m_blockTexture.handle);
         bgfx::destroy(m_chunkProgram);
         m_chunkManager.terminate();
+        m_uiRenderer.terminate();
     }
 } // rend

@@ -7,6 +7,7 @@
 
 #include "render/util/texture.hpp"
 #include "render/chunk/chunk_manager.hpp"
+#include "render/ui/ui_renderer.hpp"
 
 namespace rend {
     class MasterRenderer{
@@ -27,12 +28,17 @@ namespace rend {
 
         //! Get the chunkmanager for further work
         [[nodiscard]] ChunkManager& getChunkManagerRef() { return m_chunkManager; }
+
+        void setScreenSize(int screenWidth, int screenHeight);
     private:
         ChunkManager m_chunkManager;
+        ui::UIRenderer m_uiRenderer;
         Texture m_blockTexture;
         bgfx::UniformHandle m_blockTexSampler;
 
         bgfx::ProgramHandle m_chunkProgram;
+
+        int m_screenWidth, m_screenHeight;
     };
 } // rend
 
