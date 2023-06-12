@@ -46,6 +46,15 @@ namespace rend {
             glm::vec3(1, 0, 1)
     };
 
+    static const glm::vec3 DIRECTION_TO_COLOR[] = {
+            glm::vec3(0.65f),
+            glm::vec3(0.65f),
+            glm::vec3(0.75f),
+            glm::vec3(0.75f),
+            glm::vec3(0.95f),
+            glm::vec3(0.5f),
+    };
+
     static const glm::vec3 CHUNK_NORMALS[] = {
             glm::vec3( 0,  0,  1),
             glm::vec3( 0,  0, -1),
@@ -147,7 +156,7 @@ namespace rend {
                                 }
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
                                 vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
-                                vertex.color = glm::vec3(1, 1, 1);
+                                vertex.color = DIRECTION_TO_COLOR[dir.idx];
                                 m_vertices.push_back(vertex);
                             }
 
