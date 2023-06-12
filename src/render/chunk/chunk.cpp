@@ -50,10 +50,10 @@ namespace rend {
         }
 
         if (m_lastPlayerChangedPosition.z == 0) {
-            (*dirs)[1] = util::Direction{util::Direction::BACK};
+            (*dirs)[dirsToChange] = util::Direction{util::Direction::BACK};
             ++dirsToChange;
         } else if (m_lastPlayerChangedPosition.z == DEPTH_Z - 1) {
-            (*dirs)[1] = util::Direction{util::Direction::FRONT};
+            (*dirs)[dirsToChange] = util::Direction{util::Direction::FRONT};
             ++dirsToChange;
         }
 
