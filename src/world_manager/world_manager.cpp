@@ -7,10 +7,14 @@ world::WorldManager::WorldManager(siv::PerlinNoise::seed_type init_seed,
                                   m_snowSeed(init_seed+1),
                                   m_tempSeed(init_seed+2),
                                   m_treesSeed(init_seed+3),
+                                  m_ironSeed(init_seed+4),
+                                  m_coalSeed(init_seed+5),
                                   m_heightNoise(m_heightSeed),
                                   m_snowNoise(m_snowSeed),
                                   m_tempNoise(m_tempSeed),
                                   m_treesNoise(m_treesSeed),
+                                  m_ironNoise(m_ironSeed),
+                                  m_coalNoise(m_coalSeed),
                                   m_chunkDimensions{rend::Chunk::WIDTH_X, rend::Chunk::HEIGHT_Y, rend::Chunk::DEPTH_Z},
                                   m_renderDistance(rend_dist){
 }
@@ -28,7 +32,7 @@ void world::WorldManager::createChunks(rend::ChunkManager &chunkManager, const g
     int zPos = currChunkPos.z;
     for(int x = xPos - m_chunkDimensions.x * m_renderDistance; x <= xPos + m_chunkDimensions.x * m_renderDistance; x += m_chunkDimensions.x){
         for(int z = zPos - m_chunkDimensions.z * m_renderDistance; z <= zPos + m_chunkDimensions.z * m_renderDistance; z += m_chunkDimensions.z){
-            if(calculate_dist(cameraPos, glm::ivec3{x, 0, z}) <= m_renderDistance * m_chunkDimensions.x &&
+            if(calculate_dist(cameraPos, glm::ivec3{x, 0, z}) <= m_renderDistance * m_chunkDimensions.x and
                 std::count(m_renderedChunksPositions.begin(), m_renderedChunksPositions.end(), glm::vec3{x, 0, z}) == 0){
                 auto chunkPos = glm::ivec3{x, 0, z};
                 auto& newChunk = chunkManager.addChunk(chunkPos);
@@ -48,7 +52,7 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
                                                          remapedCoords.z / temp_freq, TEMPOCTAVES, tempPersistnce);
 
             double h_persistance = (temperature < mountainsThreshold) ? 0.9 - (temperature * 4): defaultPersistance;
-            h_persistance = (temperature <= 0.8 && temperature >= 0.1) ? 0.1: h_persistance;
+            h_persistance = (temperature <= 0.8 and temperature >= 0.1) ? 0.1: h_persistance;
 
             auto height = static_cast<uint32_t>(m_heightNoise.octave2D_01(remapedCoords.x / frequency,
                                                                           remapedCoords.z / frequency,
@@ -65,7 +69,7 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
 
             for (uint32_t y = 0; y < rend::Chunk::HEIGHT_Y; ++y) {
                 if(y <= height - 3){
-                    newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
+                    handleOres(glm::ivec3{x, y, z}, remapedCoords, height, newChunk);
                 }
                 else if(temperature < 0.9){
                     handlePlains(glm::ivec3{x, y, z}, remapedCoords, height, sand_height, snow_height, h_persistance, newChunk);
@@ -79,18 +83,33 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
     }
 }
 
+void world::WorldManager::handleOres(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk){
+    uint32_t x = pos.x;
+    uint32_t y = pos.y;
+    uint32_t z = pos.z;
+    if(m_ironNoise.octave3D_01(remapedCoords.x / iron_freq, y / iron_freq, remapedCoords.z / iron_freq, 5, 0.8) >= 0.995){
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::IRON);
+    }
+    else if(y >= m_chunkDimensions.y * coalLowerBound and m_coalNoise.octave3D_01(remapedCoords.x / coal_freq, y / coal_freq, remapedCoords.z / coal_freq, 5, 0.85) >= 0.975){
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::COAL);
+    }
+    else{
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
+    }
+}
+
 
 void world::WorldManager::handlePlains(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, uint32_t sand_height, uint32_t snow_height, double h_persistance, rend::Chunk& newChunk){
     uint32_t x = pos.x;
     uint32_t y = pos.y;
     uint32_t z = pos.z;
-    if(y == height && ((static_cast<uint32_t>((m_chunkDimensions.y * waterLevel))) <= height && height <= (static_cast<uint32_t>((m_chunkDimensions.y * waterLevel)) + sand_height))){
+    if(y == height and ((static_cast<uint32_t>((m_chunkDimensions.y * waterLevel))) <= height and height <= (static_cast<uint32_t>((m_chunkDimensions.y * waterLevel)) + sand_height))){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SAND);
     }
-    else if(y < height && height <= m_chunkDimensions.y - snow_height){
+    else if(y < height and height <= m_chunkDimensions.y - snow_height){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::DIRT);
     }
-    else if(y == height &&
+    else if(y == height and
             height <= m_chunkDimensions.y - snow_height){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::GRASS);
     }

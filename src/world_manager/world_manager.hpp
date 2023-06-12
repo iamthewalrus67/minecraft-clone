@@ -18,6 +18,8 @@ namespace world{
     constexpr double snow_freq = 100.;
     constexpr double temp_freq = 150.;
     constexpr double trees_freq = 0.25;
+    constexpr double iron_freq = 10.;
+    constexpr double coal_freq = 8.;
     // the bigger it is the more details there are
     constexpr int OCTAVES = 6;
     constexpr int TEMPOCTAVES = 10;
@@ -33,6 +35,8 @@ namespace world{
     constexpr double snowScalar = 3.5;
 
     constexpr double waterLevel = 7. / 10.;
+    constexpr double ironUpperBound = 5. / 10.;
+    constexpr double coalLowerBound = 1. / 10.;
 
     class WorldManager{
     public:
@@ -51,11 +55,15 @@ namespace world{
         siv::PerlinNoise::seed_type m_snowSeed;
         siv::PerlinNoise::seed_type m_tempSeed;
         siv::PerlinNoise::seed_type m_treesSeed;
+        siv::PerlinNoise::seed_type m_ironSeed;
+        siv::PerlinNoise::seed_type m_coalSeed;
 
         siv::PerlinNoise m_heightNoise;
         siv::PerlinNoise m_snowNoise;
         siv::PerlinNoise m_tempNoise;
         siv::PerlinNoise m_treesNoise;
+        siv::PerlinNoise m_ironNoise;
+        siv::PerlinNoise m_coalNoise;
 
 
         std::vector<glm::vec3> m_renderedChunksPositions{};
@@ -71,6 +79,7 @@ namespace world{
         bool handleTrees(glm::ivec3 coords,  double persistance, int32_t h);
         void handlePlains(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, uint32_t sand_height, uint32_t snow_height, double h_persistance, rend::Chunk& newChunk);
         void handleDesert(glm::ivec3 pos, uint32_t height, rend::Chunk& newChunk);
+        void handleOres(glm::ivec3 pos, glm::ivec3 remapedCoords, uint32_t height, rend::Chunk& newChunk);
 
         static double calculate_dist(glm::vec3 cameraPos, glm::ivec3 chunkPos);
     };
