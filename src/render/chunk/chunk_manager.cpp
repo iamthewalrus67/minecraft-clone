@@ -96,6 +96,37 @@ namespace rend {
         return getChunkRefFromAliquotPos(globalChunkPos + dir.toGlmIVec3() * dim);
     }
 
+    size_t ChunkManager::getColliders(const std::span <math::AABBf>& dest, const math::AABBi& area) {
+        size_t n = 0;
+
+        for (int x = area.min.x; x <= area.max.x; ++x) {
+            for (int y = area.min.y; y <= area.max.y; ++y) {
+                for (int z = area.min.z; z <= area.max.z; ++z) {
+                    if (n >= dest.size()) {
+                        std::cerr << "No more space in colliders container" << std::endl;
+                        return n;
+                    }
+
+                    auto pos = glm::vec3(x, y, z);
+
+                    auto chunk = getChunkRefFromGlobalPos(pos);
+
+                    if (chunk) {
+                        auto block = chunk->getBlockDataFromGlobalPos(pos);
+                        if (block.blockID == rend::BLOCKS::AIR) {
+                            continue;
+                        }
+                        pos.x += 0.5f;
+                        pos.z += 0.5f;
+                        dest[n++] = math::AABBf::unit().translate(pos);
+                    }
+                }
+            }
+        }
+
+        return n;
+    }
+
     void ChunkManager::terminate() {
         for (auto& cR: m_chunkData) {
             cR.second.terminate();
