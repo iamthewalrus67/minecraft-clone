@@ -148,6 +148,8 @@ void App::start() {
                             "%dH in characters.",
                             stats->width, stats->height, stats->textWidth,
                             stats->textHeight);
+
+        bgfx::dbgTextPrintf(5, 60, 0x4f, "Current block: %s", rend::getBlockNameFromBockID(player.getCurrentBlockID()).c_str());
         // Enable stats or debug text.
         if (keyboard.isJustPressed(GLFW_KEY_F1)) {
             s_showStats = !s_showStats;

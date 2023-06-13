@@ -12,7 +12,7 @@ namespace player {
 
 class Player {
 private:
-    static constexpr float MINING_DISTANCE = 4.0f;
+    static constexpr float MINING_DISTANCE = 6.0f;
 
     std::shared_ptr<control::FlyingCameraController> m_cameraController;
     rend::ChunkManager& m_chunkManager;
@@ -23,10 +23,24 @@ private:
     float m_speed = MovementSettings::MOVEMENT_SPEED;
     bool m_flying = true;
 
+    rend::BLOCKS m_currentBlock = rend::BLOCKS::DIRT;
+
+    inline static std::unordered_map<int, rend::BLOCKS> KEY_BLOCKS_MAP{
+            {GLFW_KEY_1, rend::BLOCKS::DIRT},
+            {GLFW_KEY_2, rend::BLOCKS::GRASS},
+            {GLFW_KEY_3, rend::BLOCKS::COBBLESTONE},
+            {GLFW_KEY_4, rend::BLOCKS::STONE},
+            {GLFW_KEY_5, rend::BLOCKS::SAND},
+            {GLFW_KEY_6, rend::BLOCKS::COAL},
+            {GLFW_KEY_7, rend::BLOCKS::IRON},
+            {GLFW_KEY_8, rend::BLOCKS::OAK_WOOD},
+            {GLFW_KEY_9, rend::BLOCKS::OAK_LEAVES}
+    };
+
     struct MovementSettings {
         static constexpr float GRAVITY = 0.05f;
         static constexpr float DRAG_COEFFICIENT = 0.2f;
-        static constexpr float MOVEMENT_SPEED = 2.0f;
+        static constexpr float MOVEMENT_SPEED = 4.0f;
         static constexpr float SLOW_MOVEMENT_SPEED = MOVEMENT_SPEED * 0.5f;
         static constexpr float ROTATION_SPEED = 0.5f;
         static constexpr float HEIGHT = 1.8f;
@@ -53,6 +67,10 @@ public:
     Player(const glm::vec3& position, std::shared_ptr<control::FlyingCameraController> cameraController, rend::ChunkManager& chunkManager)
                     : m_cameraController(cameraController), m_chunkManager(chunkManager), m_position(position) {
         m_cameraController->setPosition(m_position);
+    }
+
+    rend::BLOCKS getCurrentBlockID() {
+        return m_currentBlock;
     }
 
     void update();

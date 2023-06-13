@@ -65,6 +65,12 @@ void Player::update() {
     Keyboard &keyboard = Keyboard::instance();
     Mouse &mouse = Mouse::instance();
 
+    for (auto &[key, val] : KEY_BLOCKS_MAP) {
+        if (keyboard.isPressed(key)) {
+            m_currentBlock = val;
+        }
+    }
+
     // Movement
     glm::vec3 direction = glm::vec3{0.0f, 0.0f, 0.0f};
     for (auto &key : MovementSettings::MOVEMENT_BINDS) {
@@ -134,7 +140,7 @@ void Player::update() {
                 return false;
             }
             auto blockId = chunk->getBlockDataFromGlobalPos(p).blockID;
-            return blockId != rend::BLOCKS::AIR;
+            return blockId != rend::BLOCKS::AIR && blockId != rend::BLOCKS::WATER;
         }, MINING_DISTANCE);
 
         if (intersection) {
@@ -150,7 +156,7 @@ void Player::update() {
 
                 chunk->setBlockByPlayer(block.localChunkPos, shouldMine ?
                                                     rend::BLOCKS::AIR :
-                                                    rend::BLOCKS::SAND);
+                                                    m_currentBlock);
             }
         }
     }
