@@ -62,7 +62,7 @@ void world::WorldManager::fillChunk(rend::Chunk& newChunk, glm::ivec3 &chunkPos)
                                                 + m_chunkDimensions.y / heightAdditionScalar);
 
             auto h = m_snowNoise.noise2D_01(remapedCoords.x / snow_freq,
-                                            remapedCoords.z / snow_freq);
+                                            remapedCoords.z / snow_freq) / 2. + 0.5;
             auto sand_height = static_cast<uint32_t>(h * sandScalar);
             auto snow_height = static_cast<uint32_t>(h * (m_chunkDimensions.y / snowScalar));
 
@@ -107,7 +107,8 @@ void world::WorldManager::handlePlains(glm::ivec3 pos, glm::ivec3 remapedCoords,
     uint32_t x = pos.x;
     uint32_t y = pos.y;
     uint32_t z = pos.z;
-    if(y == height and ((static_cast<uint32_t>((m_chunkDimensions.y * waterLevel))) <= height and height <= (static_cast<uint32_t>((m_chunkDimensions.y * waterLevel)) + sand_height))){
+
+    if(y == height and (height <= (static_cast<uint32_t>((m_chunkDimensions.y * waterLevel)) + sand_height))){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SAND);
     }
     else if(y < height and height <= m_chunkDimensions.y - snow_height){
@@ -120,27 +121,27 @@ void world::WorldManager::handlePlains(glm::ivec3 pos, glm::ivec3 remapedCoords,
     else if(y < height) {
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::STONE);
     }
-    else if(y == height){
-        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW_POWDER);
-    }
     else if(y < (m_chunkDimensions.y * waterLevel)){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
     }
-    else if(y >= height + 1 and y <= height + 6
-            and m_treesNoise.octave2D_01(remapedCoords.x / world::trees_freq, remapedCoords.z / world::trees_freq, world::OCTAVES, 0.8) > 0.95
-            and height < m_chunkDimensions.y - snow_height * 1.5
+    else if(y >= height and y <= height + 6
+            and m_treesNoise.octave2D_01(remapedCoords.x / world::trees_freq, remapedCoords.z / world::trees_freq, world::OCTAVES, 0.8) > 0.97
                          and height > (m_chunkDimensions.y * waterLevel) + 2){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::OAK_WOOD);
     }
-    else{
-        if(height < m_chunkDimensions.y - snow_height * 1.5 + 7
-                    and height > (m_chunkDimensions.y / 10. * 7.) + 2
+    else if(height > (m_chunkDimensions.y * waterLevel) + 2
            and handleTrees(glm::ivec3{remapedCoords.x, y, remapedCoords.z}, h_persistance, height)){
             newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::OAK_LEAVES);
         }
-        else{
-            newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
-        }
+    else if(y == height and y >= m_chunkDimensions.y - snow_height){
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW_POWDER);
+    }
+    else if(height > m_chunkDimensions.y - snow_height
+            and handleTrees(glm::ivec3{remapedCoords.x, y-1, remapedCoords.z}, h_persistance, height)){
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SNOW_POWDER);
+    }
+    else{
+        newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::AIR);
     }
 }
 
@@ -155,7 +156,7 @@ void world::WorldManager::handleDesert(glm::ivec3 pos, uint32_t height, rend::Ch
     else if(y < height){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::SAND);
     }
-    else if(y <= (m_chunkDimensions.y * waterLevel)){
+    else if(y < (m_chunkDimensions.y * waterLevel)){
         newChunk.setBlock(glm::vec3{x, y, z}, rend::BLOCKS::WATER);
     }
     else{
@@ -171,12 +172,12 @@ bool world::WorldManager::handleTrees(glm::ivec3 coords, double persistance, int
                                                                           (coords.z + j) / world::frequency,
                                                                           world::OCTAVES,
                                                                           persistance)
-                                                * m_chunkDimensions.y / 1.8
-                                                + m_chunkDimensions.y / 2.3);
+                                                * m_chunkDimensions.y / heightScalar
+                                                + m_chunkDimensions.y / heightAdditionScalar);
 
             if(coords.y < height+4 or coords.y > (height+8+ (int)((-std::abs(i) - std::abs(j))/2.))) continue;
 
-            if(m_treesNoise.octave2D_01((coords.x + i) / world::trees_freq, (coords.z + j) / world::trees_freq, world::OCTAVES, 0.8) > 0.95) return true;
+            if(m_treesNoise.octave2D_01((coords.x + i) / world::trees_freq, (coords.z + j) / world::trees_freq, world::OCTAVES, 0.8) > 0.97) return true;
         }
     }
     return false;
