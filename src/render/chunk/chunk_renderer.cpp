@@ -87,10 +87,23 @@ namespace rend {
                 | BGFX_BUFFER_INDEX32
         );
 
+        m_dynamicTransparentVBH = bgfx::createDynamicVertexBuffer(
+                16,
+                ChunkVertex::layout,
+                BGFX_BUFFER_ALLOW_RESIZE
+        );
+
+        // Create static index buffer.
+        m_dynamicTransparentIBH = bgfx::createDynamicIndexBuffer(
+                16,
+                BGFX_BUFFER_ALLOW_RESIZE
+                | BGFX_BUFFER_INDEX32
+        );
+
         m_chunk.init(chunkPos);
     }
 
-    void ChunkRenderer::render() {
+    void ChunkRenderer::renderOpaque() {
         if (!m_chunk.isInitialized()) { return; }
 
         // Set vertex and index buffer.
@@ -101,10 +114,23 @@ namespace rend {
         bgfx::setState(BGFX_STATE_DEFAULT);
     }
 
+    void ChunkRenderer::renderTransparent() {
+        if (!m_chunk.isInitialized()) { return; }
+
+        // Set vertex and index buffer.
+        bgfx::setVertexBuffer(0, m_dynamicTransparentVBH);
+        bgfx::setIndexBuffer(m_dynamicTransparentIBH);
+
+        // Set render states.
+        bgfx::setState(BGFX_STATE_DEFAULT | BGFX_STATE_BLEND_ALPHA);
+    }
+
     void ChunkRenderer::meshChunk(const std::array<Chunk*, 6> neighborChunks) {
         // Clear old mesh
-        m_vertices.clear();
-        m_indices.clear();
+        m_opaqueVertices.clear();
+        m_opaqueIndices.clear();
+        m_transparentVertices.clear();
+        m_transparentIndices.clear();
 
         glm::vec3 blockPos;
         for (uint32_t w = 0; w < Chunk::WIDTH_X; ++w) {
@@ -118,11 +144,16 @@ namespace rend {
                     // Iterate over all 6 directions
                     for (size_t i = 0; i < 6; ++i) {
                         util::Direction dir{static_cast<util::Direction::INDEX>(i)};
-                        const size_t offset = m_vertices.size();
+
+                        const size_t offset = m_opaqueVertices.size();
+                        const size_t offsetTransparent = m_transparentVertices.size();
 
                         bool isNeighborLiquid = false;
                         // If neighbor is air and we are not air: emit a face
                         if ((m_chunk.isBlockAir(bIdx + dir.toGlmVec3()) || m_chunk.isBlockNotFull(bIdx + dir.toGlmVec3())) && (!m_chunk.isBlockAir(bIdx))) {
+
+                            bool isTransparent = m_chunk.isBlockTransparent(bIdx);
+
                             if (m_chunk.isOutOfBounds(bIdx + dir.toGlmVec3())) {
                                 if (!neighborChunks[dir.idx]) { continue; }
                                 glm::ivec3 newChunkBIdx = bIdx + dir.toGlmVec3();
@@ -157,12 +188,22 @@ namespace rend {
                                 vertex.normal = CHUNK_NORMALS[dir.idx];
                                 vertex.uv = (CHUNK_UVS[i] * TEXTURE_SIZE) + glm::vec2(textureOffset.x, 16 - textureOffset.y - 1) * TEXTURE_SIZE;
                                 vertex.color = DIRECTION_TO_COLOR[dir.idx];
-                                m_vertices.push_back(vertex);
+                                if (isTransparent) {
+                                    m_transparentVertices.push_back(vertex);
+                                } else {
+                                    m_opaqueVertices.push_back(vertex);
+                                }
                             }
-
-                            // emit indices
-                            for (size_t i : FACE_INDICES) {
-                                m_indices.push_back(offset + i);
+                            if (isTransparent) {
+                                // emit indices
+                                for (size_t i : FACE_INDICES) {
+                                    m_transparentIndices.push_back(offsetTransparent + i);
+                                }
+                            } else {
+                                // emit indices
+                                for (size_t i : FACE_INDICES) {
+                                    m_opaqueIndices.push_back(offset + i);
+                                }
                             }
                         }
                     }
@@ -172,23 +213,38 @@ namespace rend {
 
         // Do needed operations after chunk remesh
         m_chunk.logReMesh();
-        if (m_vertices.size() == 0 || m_indices.size() == 0) { return; }
+        if (m_opaqueVertices.size() == 0 || m_opaqueIndices.size() == 0) { return; }
 
         // Update the dynamic vertex buffer if chunk changed
         bgfx::update(m_dynamicVBH, 0,
                      bgfx::copy(
-                             &m_vertices[0],
-                             m_vertices.size() * sizeof(m_vertices[0])));
+                             &m_opaqueVertices[0],
+                             m_opaqueVertices.size() * sizeof(m_opaqueVertices[0])));
         // Update the dynamic index buffer if chunk changed
         bgfx::update(m_dynamicIBH, 0,
                      bgfx::copy(
-                             &m_indices[0],
-                             m_indices.size() * sizeof(m_indices[0])));
+                             &m_opaqueIndices[0],
+                             m_opaqueIndices.size() * sizeof(m_opaqueIndices[0])));
+
+        if (m_transparentVertices.size() == 0 || m_transparentIndices.size() == 0) { return; }
+
+        // Update the dynamic vertex buffer if chunk changed
+        bgfx::update(m_dynamicTransparentVBH, 0,
+                     bgfx::copy(
+                             &m_transparentVertices[0],
+                             m_transparentVertices.size() * sizeof(m_transparentVertices[0])));
+        // Update the dynamic index buffer if chunk changed
+        bgfx::update(m_dynamicTransparentIBH, 0,
+                     bgfx::copy(
+                             &m_transparentIndices[0],
+                             m_transparentIndices.size() * sizeof(m_transparentIndices[0])));
     }
 
     void ChunkRenderer::terminate() {
         // Cleanup.
         bgfx::destroy(m_dynamicVBH);
         bgfx::destroy(m_dynamicIBH);
+        bgfx::destroy(m_dynamicTransparentVBH);
+        bgfx::destroy(m_dynamicTransparentIBH);
     }
 } // rend

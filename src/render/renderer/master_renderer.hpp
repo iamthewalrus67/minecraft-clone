@@ -37,6 +37,7 @@ namespace rend {
         bgfx::UniformHandle m_blockTexSampler;
 
         bgfx::ProgramHandle m_chunkProgram;
+        bgfx::ProgramHandle m_chunkProgramTransparent;
 
         int m_screenWidth, m_screenHeight;
     };

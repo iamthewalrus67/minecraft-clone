@@ -61,6 +61,8 @@ namespace rend {
         //! Get the block at the specified globalPosition
         [[nodiscard]] Block getBlockDataFromGlobalPos(const glm::vec3& globalPos);
 
+        //! True if block has transparency
+        [[nodiscard]] bool isBlockTransparent(const glm::ivec3& posInChunk) const;
         [[nodiscard]] bool isBlockAir(const glm::ivec3& posInChunk) const;
         //! Returns true if the block does not take up entire block size, LIKE WATER LAVA, NOT AIR!!!!!
         [[nodiscard]] bool isBlockNotFull(const glm::ivec3& posInChunk) const;

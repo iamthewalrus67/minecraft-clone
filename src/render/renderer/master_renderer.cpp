@@ -19,6 +19,11 @@ namespace rend {
 
         m_chunkProgram = bgfx::createProgram(vsh, fsh, true);
 
+        vsh = loadShader("res/shaders/water/vs_simple.bin");
+        fsh = loadShader("res/shaders/water/fs_simple.bin");
+
+        m_chunkProgramTransparent = bgfx::createProgram(vsh, fsh, true);
+
         m_uiRenderer.init();
     }
 
@@ -29,9 +34,15 @@ namespace rend {
 
         auto& chunkRenderers = m_chunkManager.getChunkRenderers();
         for (auto& renderer: chunkRenderers) {
-            renderer.second.render();
+            renderer.second.renderOpaque();
 
             bgfx::submit(0, m_chunkProgram);
+        }
+
+        for (auto& renderer: chunkRenderers) {
+            renderer.second.renderTransparent();
+
+            bgfx::submit(0, m_chunkProgramTransparent);
         }
 
         m_uiRenderer.render();
@@ -48,6 +59,7 @@ namespace rend {
         bgfx::destroy(m_blockTexSampler);
         bgfx::destroy(m_blockTexture.handle);
         bgfx::destroy(m_chunkProgram);
+        bgfx::destroy(m_chunkProgramTransparent);
         m_chunkManager.terminate();
         m_uiRenderer.terminate();
     }
