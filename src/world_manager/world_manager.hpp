@@ -12,10 +12,10 @@ namespace world{
     // default seed
     constexpr siv::PerlinNoise::seed_type DEF_SEED = 123456u;
     // in chunks
-    constexpr double DEF_RENDDIST = 14;
+    constexpr double DEF_RENDDIST = 4;
     // the bigger it is the smoother the noise is
     constexpr double frequency = 100.;
-    constexpr double snow_freq = 100.;
+    constexpr double snow_freq = 300.;
     constexpr double temp_freq = 150.;
     constexpr double trees_freq = 0.25;
     constexpr double iron_freq = 10.;
@@ -28,13 +28,13 @@ namespace world{
     constexpr double tempPersistnce = 0.65;
     constexpr double mountainsThreshold = 0.1;
 
-    constexpr double heightScalar = 1.8;
-    constexpr double heightAdditionScalar = 2.3;
+    constexpr double heightScalar = 1.;
+    constexpr double heightAdditionScalar = 10000.;
 
     constexpr double sandScalar = 2;
-    constexpr double snowScalar = 3.5;
+    constexpr double snowScalar = 2.65;
 
-    constexpr double waterLevel = 7. / 10.;
+    constexpr double waterLevel = 5. / 10.;
     constexpr double ironUpperBound = 5. / 10.;
     constexpr double coalLowerBound = 1. / 10.;
 
