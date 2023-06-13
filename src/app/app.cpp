@@ -99,6 +99,7 @@ void App::start() {
 
     int width = 1024, height = 768;
     m_window.getSize(&width, &height);
+    m_renderer.setScreenSize(width, height);
 
     world::WorldManager wm = world::WorldManager();
 
@@ -113,6 +114,7 @@ void App::start() {
             bgfx::reset((uint32_t)width, (uint32_t)height, BGFX_RESET_VSYNC);
             bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
             m_cameraController->updateScreenSize(width, height);
+            m_renderer.setScreenSize(width, height);
         }
 
         if (mouse.isLeftButtonJustPressed()) {
