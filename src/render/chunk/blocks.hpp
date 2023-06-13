@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 
 #include "unordered_map"
+#include <string>
 
 #include "render/util/direction.hpp"
 
@@ -29,6 +30,58 @@ namespace rend {
         LAVA = 12,
         DIRT = 13
     };
+
+    inline std::string getBlockNameFromBockID(BLOCKS blockID) {
+        switch(blockID) {
+            case AIR:
+                return "AIR";
+                break;
+            case GRASS:
+                return "GRASS";
+                break;
+            case SAND:
+                return "SAND";
+                break;
+            case STONE:
+                return "STONE";
+                break;
+            case OAK_WOOD:
+                return "OAK_WOOD";
+                break;
+            case OAK_LEAVES:
+                return "OAK_LEAVES";
+                break;
+            case COBBLESTONE:
+                return "COBBLESTONE";
+                break;
+            case IRON:
+                return "IRON";
+                break;
+            case SNOW:
+                return "SNOW";
+                break;
+            case SNOW_POWDER:
+                return "SNOW_POWDER";
+                break;
+            case WATER:
+                return "WATER";
+                break;
+            case LAVA:
+                return "LAVA";
+                break;
+            case DIRT:
+                return "DIRT";
+                break;
+            case COAL:
+                return "COAL";
+                break;
+            default:
+                return "IDK";
+                break;
+        }
+
+        return "IDK";
+    }
 
     //! Get the offset in texture depending on block type
     [[nodiscard]] inline glm::vec2 getTextureOffset(BLOCKS ID, util::Direction dir) {
