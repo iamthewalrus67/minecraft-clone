@@ -82,7 +82,7 @@ void App::initRenderIternal() {
             new control::FlyingCameraController{
                 60.0f,
                 {width, height},
-                {0.0f, 0.0f, 10.0f}
+                {0.0f, 150.0f, 10.0f}
             }
     );
 }
@@ -102,7 +102,7 @@ void App::start() {
 
     world::WorldManager wm = world::WorldManager();
 
-    player::Player player{m_cameraController, m_renderer.getChunkManagerRef()};
+    player::Player player{glm::vec3{0.0f, 230.0f, 0.0f}, m_cameraController, m_renderer.getChunkManagerRef()};
 
     while (!m_window.shouldClose()) {
         m_window.pollEvents();

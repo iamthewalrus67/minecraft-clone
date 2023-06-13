@@ -45,4 +45,12 @@ glm::vec3 FlyingCameraController::getDirection() {
     return m_camera.getFrontDirection();
 }
 
+glm::vec3 FlyingCameraController::getRightDir() {
+    return m_camera.getRightDirection();
+}
+
+glm::vec3 FlyingCameraController::getUpDir() {
+    return m_camera.getUpDirection();
+}
+
 } // namespace control

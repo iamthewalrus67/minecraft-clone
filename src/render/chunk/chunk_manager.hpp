@@ -7,10 +7,12 @@
 
 #include <unordered_map>
 #include <optional>
+#include <span>
 
 #include "chunk_renderer.hpp"
 
 #include "util/util.hpp"
+#include "math/aabb.hpp"
 
 namespace rend {
     //! A class that manages all of the chunks
@@ -37,6 +39,9 @@ namespace rend {
 
         //! Get all the chunk renderers, done so that the renderer can pull them
         [[nodiscard]] ChunkRendererMap& getChunkRenderers() { return m_chunkData; }
+
+        //! Get colliders for blocks in the chunk
+        size_t getColliders(const std::span<math::AABBf>& dest, const math::AABBi& area);
 
         //! Terminate all renderers
         void terminate();

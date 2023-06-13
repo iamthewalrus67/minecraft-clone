@@ -22,7 +22,13 @@ public:
     [[nodiscard]] glm::mat4 &getViewMatrix() { return m_view; };
     [[nodiscard]] glm::vec3 &getPosition() { return m_position; };
     [[nodiscard]] glm::vec3 &getFrontDirection() { return m_frontDir; };
+    [[nodiscard]] glm::vec3 &getRightDirection() { return m_rightDir; };
+    [[nodiscard]] glm::vec3 &getUpDirection() { return m_upDir; };
 
+    void setPosition(const glm::vec3& pos) {
+        m_position = pos;
+        updateViewMatrix();
+    }
 
 private:
     //! Update view matrix, called at every camera state change
