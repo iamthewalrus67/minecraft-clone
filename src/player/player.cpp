@@ -6,6 +6,7 @@
 
 #include "player.hpp"
 #include "math/ray.hpp"
+#include "time/time.hpp"
 
 namespace player {
 
@@ -16,8 +17,8 @@ math::AABBf Player::aabb() {
                         .centerOn(m_position, glm::bvec3{1, 0, 1});
 }
 
-float Player::tryMoveAxis(const math::AABBf &box, float movement, std::span <math::AABBf> colliders,
-                          const glm::vec3 &axis) {
+float Player::tryMoveAxis(const math::AABBf& box, float movement, std::span <math::AABBf> colliders,
+                          const glm::vec3& axis) {
     constexpr float EPSILON = 0.05f;
 
     auto d_v = axis * movement;
@@ -45,14 +46,13 @@ float Player::tryMoveAxis(const math::AABBf &box, float movement, std::span <mat
     return glm::abs(result) <= glm::epsilon<float>() ? 0.0f : result;
 }
 
-glm::vec3 Player::tryMove(const math::AABBf &box, const glm::vec3 &movement, std::span <math::AABBf> colliders) {
+glm::vec3 Player::tryMove(const math::AABBf& box, const glm::vec3& movement, std::span<math::AABBf> colliders) {
     glm::vec3 result;
     auto current = box;
 
     for (size_t i = 0; i < 3; i++) {
         glm::vec3 axis(0);
         axis[i] = 1.0f;
-
         float movementAxis = tryMoveAxis(box, movement[i], colliders, axis);
         current = current.translate(axis * movementAxis);
         result[i] = movementAxis;
@@ -78,12 +78,12 @@ void Player::update() {
     }
 
     if (keyboard.isPressed(GLFW_KEY_LEFT_SHIFT)) {
-        m_speed = 0.1f;
+        m_speed = MovementSettings::SLOW_MOVEMENT_SPEED;
     } else {
         m_speed = MovementSettings::MOVEMENT_SPEED;
     }
 
-    glm::vec3 movement = direction * m_speed;
+    glm::vec3 movement = direction * m_speed * util::Time::instance().deltaTime();
     m_velocity += movement;
 
     if (keyboard.isJustPressed(GLFW_KEY_G)) {

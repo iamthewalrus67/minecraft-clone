@@ -23,6 +23,7 @@
 #include "logging/logger/logger.hpp"
 #include "shader_loading/shader_loading.hpp"
 #include "window/window.hpp"
+#include "time/time.hpp"
 
 #include "controllers/camera/flying_camera_controller.hpp"
 #include "app/app.hpp"
@@ -172,6 +173,7 @@ void App::start() {
 
         keyboard.updateKeys();
         mouse.updatePos();
+        util::Time::instance().update();
     }
 }
 

@@ -26,7 +26,8 @@ private:
     struct MovementSettings {
         static constexpr float GRAVITY = 0.05f;
         static constexpr float DRAG_COEFFICIENT = 0.2f;
-        static constexpr float MOVEMENT_SPEED = 0.5f;
+        static constexpr float MOVEMENT_SPEED = 2.0f;
+        static constexpr float SLOW_MOVEMENT_SPEED = MOVEMENT_SPEED * 0.5f;
         static constexpr float ROTATION_SPEED = 0.5f;
         static constexpr float HEIGHT = 1.8f;
         inline static std::unordered_map<int, glm::vec3> MOVEMENT_BIND_MAP{
