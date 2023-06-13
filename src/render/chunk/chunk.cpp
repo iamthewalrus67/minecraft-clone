@@ -60,6 +60,10 @@ namespace rend {
         return dirsToChange;
     }
 
+    bool Chunk::isBlockTransparent(const glm::ivec3& posInChunk) const {
+        return operator[](posInChunk) == BLOCKS::WATER;
+    }
+
     bool Chunk::isBlockAir(const glm::ivec3 &posInChunk) const {
         if (isOutOfBounds(posInChunk)) { return true; }
         return operator[](posInChunk) == BLOCKS::AIR;

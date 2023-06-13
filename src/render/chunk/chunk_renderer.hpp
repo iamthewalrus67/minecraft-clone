@@ -34,7 +34,10 @@ namespace rend {
         void init(const glm::vec3& chunkPos);
 
         //! Build the mesh if needed(was changed) and render the chunk mesh
-        void render();
+        void renderOpaque();
+
+        //! Just render the transparent meshes
+        void renderTransparent();
 
         //! Mesh the chunk if it was changed to render it properly
         void meshChunk(const std::array<Chunk*, 6> neighborChunks);
@@ -52,11 +55,17 @@ namespace rend {
 
         Chunk m_chunk;
 
-        std::vector<ChunkVertex> m_vertices;
-        std::vector<uint32_t> m_indices;
+        std::vector<ChunkVertex> m_opaqueVertices;
+        std::vector<uint32_t> m_opaqueIndices;
+
+        std::vector<ChunkVertex> m_transparentVertices;
+        std::vector<uint32_t> m_transparentIndices;
 
         bgfx::DynamicVertexBufferHandle m_dynamicVBH;
         bgfx::DynamicIndexBufferHandle  m_dynamicIBH;
+
+        bgfx::DynamicVertexBufferHandle m_dynamicTransparentVBH;
+        bgfx::DynamicIndexBufferHandle  m_dynamicTransparentIBH;
     };
 } // rend
 
