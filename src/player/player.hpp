@@ -22,6 +22,8 @@ private:
 
     float m_speed = MovementSettings::MOVEMENT_SPEED;
     bool m_flying = true;
+    bool m_grounded = false;
+    bool m_noClip = false;
 
     rend::BLOCKS m_currentBlock = rend::BLOCKS::DIRT;
 
@@ -38,10 +40,12 @@ private:
     };
 
     struct MovementSettings {
-        static constexpr float GRAVITY = 0.05f;
+        static constexpr float GRAVITY = 0.5f;
         static constexpr float DRAG_COEFFICIENT = 0.2f;
-        static constexpr float MOVEMENT_SPEED = 4.0f;
+        static constexpr float MOVEMENT_SPEED = 2.0f;
+        static constexpr float FLYING_SPEED = 4.0f;
         static constexpr float SLOW_MOVEMENT_SPEED = MOVEMENT_SPEED * 0.5f;
+        static constexpr float SLOW_FLYING_SPEED = FLYING_SPEED * 0.5f;
         static constexpr float ROTATION_SPEED = 0.5f;
         static constexpr float HEIGHT = 1.8f;
         inline static std::unordered_map<int, glm::vec3> MOVEMENT_BIND_MAP{
@@ -49,7 +53,7 @@ private:
                 {GLFW_KEY_D, {1.0f, 0.0f, 0.0f}},
                 {GLFW_KEY_W, {0.0f, 0.0f, 1.0f}},
                 {GLFW_KEY_S, {0.0f, 0.0f, -1.0f}},
-                {GLFW_KEY_SPACE, {0.0f, 1.0f, 0.0f}},
+//                {GLFW_KEY_SPACE, {0.0f, 1.0f, 0.0f}},
                 {GLFW_KEY_LEFT_CONTROL, {0.0f, -1.0f, 0.0f}},
         };
         inline static std::vector<int> MOVEMENT_BINDS{
@@ -57,8 +61,8 @@ private:
                 GLFW_KEY_S, GLFW_KEY_SPACE, GLFW_KEY_LEFT_CONTROL};
     };
 
-    float tryMoveAxis(const math::AABBf& box, float movement, std::span<math::AABBf> colliders, const glm::vec3& axis);
-    glm::vec3 tryMove(const math::AABBf& box, const glm::vec3& movement, std::span<math::AABBf> colliders);
+    float tryMoveAxis(const math::AABBf& box, float movement, const std::span<math::AABBf>& colliders, const glm::vec3& axis);
+    glm::vec3 tryMove(const math::AABBf& box, const glm::vec3& movement, const std::span<math::AABBf>& colliders);
 
     math::AABBf aabb();
 public:

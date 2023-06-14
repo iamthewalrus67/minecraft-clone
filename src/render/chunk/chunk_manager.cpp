@@ -113,11 +113,11 @@ namespace rend {
 
                     if (chunk) {
                         auto block = chunk->getBlockDataFromGlobalPos(pos);
-                        if (block.blockID == rend::BLOCKS::AIR) {
+                        if (block.blockID == rend::BLOCKS::AIR ||
+                            block.blockID == rend::BLOCKS::WATER ||
+                            block.blockID == rend::BLOCKS::SNOW_POWDER) {
                             continue;
                         }
-                        pos.x += 0.5f;
-                        pos.z += 0.5f;
                         dest[n++] = math::AABBf::unit().translate(pos);
                     }
                 }

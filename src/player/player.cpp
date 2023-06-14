@@ -17,7 +17,7 @@ math::AABBf Player::aabb() {
                         .centerOn(m_position, glm::bvec3{1, 0, 1});
 }
 
-float Player::tryMoveAxis(const math::AABBf& box, float movement, std::span <math::AABBf> colliders,
+float Player::tryMoveAxis(const math::AABBf& box, float movement, const std::span <math::AABBf>& colliders,
                           const glm::vec3& axis) {
     constexpr float EPSILON = 0.05f;
 
@@ -46,12 +46,12 @@ float Player::tryMoveAxis(const math::AABBf& box, float movement, std::span <mat
     return glm::abs(result) <= glm::epsilon<float>() ? 0.0f : result;
 }
 
-glm::vec3 Player::tryMove(const math::AABBf& box, const glm::vec3& movement, std::span<math::AABBf> colliders) {
+glm::vec3 Player::tryMove(const math::AABBf& box, const glm::vec3& movement, const std::span<math::AABBf>& colliders) {
     glm::vec3 result;
     auto current = box;
 
-    for (size_t i = 0; i < 3; i++) {
-        glm::vec3 axis(0);
+    for (size_t i = 0; i < 3; ++i) {
+        glm::vec3 axis{0};
         axis[i] = 1.0f;
         float movementAxis = tryMoveAxis(box, movement[i], colliders, axis);
         current = current.translate(axis * movementAxis);
@@ -79,55 +79,89 @@ void Player::update() {
         }
     }
 
+    if (keyboard.isJustPressed(GLFW_KEY_V)) {
+        m_noClip = !m_noClip;
+    }
+
     if (glm::length(direction) > 0) {
         direction = glm::normalize(direction);
     }
 
     if (keyboard.isPressed(GLFW_KEY_LEFT_SHIFT)) {
-        m_speed = MovementSettings::SLOW_MOVEMENT_SPEED;
+        m_speed = m_flying ? MovementSettings::SLOW_FLYING_SPEED : MovementSettings::SLOW_MOVEMENT_SPEED;
     } else {
-        m_speed = MovementSettings::MOVEMENT_SPEED;
+        m_speed = m_flying ? MovementSettings::FLYING_SPEED : MovementSettings::MOVEMENT_SPEED;
     }
 
-    glm::vec3 movement = direction * m_speed * util::Time::instance().deltaTime();
+    bool jumpPressed = keyboard.isPressed(GLFW_KEY_SPACE);
+
+    if (jumpPressed && m_flying) {
+        direction.y = 1.0f;
+    }
+
+    auto deltaTime = util::Time::instance().deltaTime();
+    glm::vec3 movement = direction * m_speed * deltaTime;
+
     m_velocity += movement;
+
+    if (jumpPressed && !m_flying && m_grounded) {
+        m_velocity.y += 5.0f * deltaTime;
+    }
 
     if (keyboard.isJustPressed(GLFW_KEY_G)) {
         m_flying = !m_flying;
     }
 
-    if (!m_flying) {
-        m_velocity.y -= MovementSettings::GRAVITY;
+    if (!m_flying && !m_grounded) {
+        m_velocity.y -= MovementSettings::GRAVITY * deltaTime;
     }
 
-    m_velocity -= MovementSettings::DRAG_COEFFICIENT * m_velocity;
+    m_velocity.x -= MovementSettings::DRAG_COEFFICIENT * m_velocity.x;
+    m_velocity.z -= MovementSettings::DRAG_COEFFICIENT * m_velocity.z;
+    if (m_flying) {
+        m_velocity.y -= MovementSettings::DRAG_COEFFICIENT * m_velocity.y;
+    }
 
     m_velocity.x = std::clamp(m_velocity.x, -m_speed, m_speed);
     m_velocity.z = std::clamp(m_velocity.z, -m_speed, m_speed);
-    m_velocity.y = std::clamp(m_velocity.y, -m_speed, m_speed);
+    m_velocity.y = m_flying ? std::clamp(m_velocity.y, -m_speed, m_speed) : std::clamp(m_velocity.y, -10.0f, m_speed);
+
+    std::cout << "Velocity: " << glm::to_string(m_velocity) << std::endl;
 
     // Collision detection
-//    std::array<math::AABBf, 256> colliders;
-//    size_t n = m_chunkManager.getColliders(colliders, math::AABBi::unit().scale(4).centerOn(glm::floor(m_position)));
-//    auto legalMove = tryMove(aabb(), m_velocity, {&colliders[0], n});
-//
-//    for (size_t i = 0; i < 3; ++i) {
-//        if (glm::abs(m_velocity[i] - legalMove[i]) >= glm::epsilon<float>()) {
-//            m_velocity[i] = 0.0f;
-//        }
-//    }
-
 
     auto newPosition = m_position;
     auto rightDir = m_cameraController->getRightDir();
     auto frontDir = -glm::cross(rightDir, glm::vec3{0.0f, 1.0f, 0.0f});
     frontDir = glm::normalize(frontDir);
-    newPosition += rightDir * m_velocity.x
-                   + glm::vec3{0.0f, 1.0f, 0.0f} * m_velocity.y
-                   + frontDir * m_velocity.z;
+    auto rotatedVelocity = rightDir * m_velocity.x
+                            + glm::vec3{0.0f, 1.0f, 0.0f} * m_velocity.y
+                            + frontDir * m_velocity.z;
+
+    glm::vec3 legalMove = rotatedVelocity;
+    if (!m_noClip) {
+        std::array<math::AABBf, 256> colliders;
+        size_t n = m_chunkManager.getColliders(colliders,
+                                               math::AABBi::unit().scale(4).centerOn(glm::floor(m_position)));
+        legalMove = tryMove(aabb(), rotatedVelocity, {&colliders[0], n});
+    }
+
+    glm::bvec3 stop{false};
+    for (size_t i = 0; i < 3; ++i) {
+        if (glm::abs(rotatedVelocity[i] - legalMove[i]) >= glm::epsilon<float>()) {
+            stop[i] = true;
+        }
+    }
+
+    newPosition += legalMove;
 
     m_cameraController->setPosition(newPosition + glm::vec3{0.0f, MovementSettings::HEIGHT, 0.0f});
     m_position = newPosition;
+
+    m_grounded = stop.y;
+    if (m_grounded) {
+        m_velocity.y = 0.0f;
+    }
 
     // Block destruction
     bool shouldMine = mouse.isLeftButtonJustPressed();
